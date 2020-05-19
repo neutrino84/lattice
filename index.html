@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>nGrid Development</title>
+  <!-- <script src="./dist/ngrid.esm.js" type="module"></script> -->
+</head>
+<body>
+  <div id="grid"></div>
+  <script type="module">
+    import Grid from './dist/ngrid.esm.js'
+
+    let data = [
+      {
+        id: 1,
+        title: 'Interdum Varius',
+        description: 'enim nulla aliquet porttitor lacus.',
+        date: new Date()
+      }, {
+        id: 2,
+        title: 'Gravida Dictum',
+        description: 'Tortor consequat id porta nibh.',
+        date: new Date()
+      }, {
+        id: 3,
+        title: 'Phasellus Faucibus',
+        description: 'Dictum non consectetur a erat.',
+        date: new Date()
+      }
+    ]
+    
+    let core = new Grid.Core({
+      element: 'grid',
+      definitions: [{
+        name: 'code',
+        field: 'id'
+      }, {
+        name: 'title',
+        field: 'title'
+      }, {
+        name: 'description',
+        field: 'description'
+      }],
+      data: []
+    })
+  </script>
+</body>
+</html>
