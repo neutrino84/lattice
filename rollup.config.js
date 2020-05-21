@@ -4,44 +4,50 @@ import typescript from '@rollup/plugin-typescript'
 import pkg from './package.json'
 
 const extensions = ['.js', '.ts']
-export default [
-  {
-    input: './src/main.ts',
-    plugins: [
-      typescript({ target: 'es5', module: 'commonjs' }),
-      commonjs({ extensions }),
-      resolve(),
-    ],
-    output: {
-      file: pkg.main,
-      format: 'cjs',
-      // entryFileNames: 'ngrid.[format].js',
-    }
-  }, {
-    input: './src/main.ts',
-    plugins: [
-      typescript({ target: 'es2017', module: 'es2015' }),
-      // commonjs(),
-      resolve(),
-    ],
-    output: {
-      file: pkg.module,
-      format: 'es',
-      // entryFileNames: 'ngrid.[format].js'
-    }
-  }, {
-    input: './src/main.ts',
-    plugins: [
-      typescript({ target: 'es5', module: 'commonjs' }),
-      resolve({ extensions }),
-      commonjs({ extensions })
-    ],
-    output: {
-      file: pkg.browser,
-      format: 'iife',
-      name: 'nGrid',
-      compact: false,
-      sourcemap: false
-    },
-  }
-]
+const watchOptions = {
+  buildDelay: 500,
+  exclude: ['node_modules/**', 'dist/**']
+}
+
+let configurations = []
+    configurations.push({
+      watch: watchOptions,
+      input: './src/main.ts',
+      plugins: [
+        typescript({ target: 'es5', module: 'commonjs' }),
+        commonjs({ extensions }),
+        resolve(),
+      ],
+      output: {
+        file: pkg.main,
+        format: 'cjs',
+        // entryFileNames: 'ngrid.[format].js',
+      }
+    }, {
+      watch: watchOptions,
+      input: './src/main.ts',
+      plugins: [
+        typescript({ target: 'es6', module: 'es6' }),
+        resolve(),
+      ],
+      output: {
+        file: pkg.module,
+        format: 'es',
+        // entryFileNames: 'ngrid.[format].js'
+      }
+    }, {
+      watch: watchOptions,
+      input: './src/main.ts',
+      plugins: [
+        typescript({ target: 'es5', module: 'commonjs' }),
+        resolve({ extensions }),
+        commonjs({ extensions }),
+      ],
+      output: {
+        file: pkg.browser,
+        format: 'iife',
+        name: 'nGrid',
+      },
+    })
+
+export default configurations
