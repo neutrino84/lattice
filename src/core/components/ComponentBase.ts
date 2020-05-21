@@ -1,26 +1,60 @@
-import { el } from 'redom'
+import { el, mount, unmount, setAttr } from 'redom'
 
-export default class ComponentBase {
-  id: number
+export interface ComponentOptions {
   name: string
+  content?: string
+  tag?: string
+  display?: boolean
+  visible?: boolean
+  classes?: string[]
+  el?: HTMLElement
+}
+export default class ComponentBase {
+  private static id: number = 0
+  private id: number = 0
+
+  name: string
+  tag: string
+  display: boolean
+  visible: boolean
+  classes: string[]
   el: HTMLElement
 
-  template = ''
-  display: boolean = true
-  visible: boolean = true
-  classes: string[] = []
-
-  constructor() {
-    this.id = 0 
-    this.name = ''
-    this.el = el('div', 'hello')
+  constructor(options: ComponentOptions) {
+    this.id = ComponentBase.id =+ 1
+    this.name = options.name + '-' + this.id
+    this.tag = options.tag || 'div'
+    this.display = options.display || true
+    this.visible = options.visible || true
+    this.classes = options.classes || []
+    this.el = options.el || el(this.tag, options.content || '')
+    this.attributes({
+      'class': this.classes.join(' '),
+    })
   }
 
-  init(): void {
+  attributes(value: object) {
+    setAttr(this.el, value)
+  }
 
+  update(content: string): void {
+    this.el.textContent = content
+  }
+
+  mount(parent: HTMLElement, before: HTMLElement | undefined = undefined, replace: boolean | undefined = undefined): void {
+    mount(parent, this.el, before, replace)
+  }
+
+  unmount(): void {
+    let parent = this.el.parentElement
+    if (parent) {
+      unmount(parent, this.el)
+    } else {
+      throw new Error('You can not unmount an element with no parent')
+    }
   }
 
   destroy(): void {
-    
+    delete this.el
   }
 }
