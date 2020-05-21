@@ -3,7 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>nGrid Development</title>
-  <!-- <script src="./dist/ngrid.esm.js" type="module"></script> -->
+  <style>
+    #grid .header,
+    #grid .grid,
+    #grid .footer,
+    #grid .row {
+      position: relative;
+    }
+    #grid .column-cell,
+    #grid .cell {
+      position: absolute;
+      overflow: hidden;
+    }
+  </style>
 </head>
 <body>
   <div id="grid"></div>
@@ -26,11 +38,16 @@
         title: 'Phasellus Faucibus',
         description: 'Dictum non consectetur a erat.',
         date: new Date()
-      }
+      },
     ]
     
-    let core = new Grid.Core({
+    let core = new Grid({
+      debug: true,
       element: 'grid',
+      data: data,
+      row: {
+        height: 20
+      },
       definitions: [{
         name: 'code',
         field: 'id'
@@ -41,7 +58,6 @@
         name: 'description',
         field: 'description'
       }],
-      data: []
     })
   </script>
 </body>
