@@ -1,5 +1,9 @@
-import Core from '.';
-import Module from './modules/Module';
+import Core from '.'
+import Module from './modules/Module'
+
+export interface ModuleClass<T> extends Function {
+  new (...args: any[]): T
+}
 
 export default class ModuleRegistry {
   private core: Core
@@ -9,12 +13,18 @@ export default class ModuleRegistry {
     this.core = core
   }
 
-  init<T extends Module>(Module: { new(core: Core): T }): void {
-    this.add(new Module(this.core))
+  init(modules: ModuleClass<Module>[]): void {
+    // instantiate modules
+    modules.forEach(Module => this.add(Module))
+
+    // initialize instantiated modules
+    this.modules.forEach(module => {
+      module.init()
+    })
   }
 
-  add(module: Module): void {
-    this.modules.set(module.name, module)
+  add(Module: ModuleClass<Module>): void {
+    this.modules.set(Module.name, new Module(this.core))
   }
 
   get(name: string): Module | undefined {
