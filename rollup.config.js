@@ -28,6 +28,7 @@ let configurations = []
       input: './src/main.ts',
       plugins: [
         typescript({ target: 'es6', module: 'es6' }),
+        commonjs({ extensions }),
         resolve(),
       ],
       output: {
