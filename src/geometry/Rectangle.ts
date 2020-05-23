@@ -19,4 +19,14 @@ export default class Rectangle extends DOMRect {
       this.y = rect.y;
     }
   }
+
+  contains(rect: Rectangle): boolean {
+    if (rect.x >= this.x && rect.x+rect.width <= this.x+this.width) {
+      if (rect.y >= this.y && rect.y+rect.height <= this.y+this.height) {
+        return true
+      } else {
+        return false
+      }
+    } else return false
+	};
 }
