@@ -1,3 +1,4 @@
+
 import ModuleRegistry from './ModuleRegistry'
 import GridManager from './modules/grid/GridManager'
 import ColumnManager from './modules/column/ColumnManager'
@@ -13,14 +14,9 @@ export type ColumnDefinition = {
   width: number
 }
 
-export type RowDefinition = {
-  height: number
-}
-
 export interface GridOptions {
   debug: boolean
   element: HTMLElement | string
-  row: RowDefinition
   data: any[]
   definitions: ColumnDefinition[]
 }
@@ -37,7 +33,6 @@ export default class Core {
 
   constructor(options: GridOptions) {
     this.options = options
-
     if (typeof options.element === 'string') {
       let element = document.getElementById(options.element)
       if (element instanceof HTMLElement) {
