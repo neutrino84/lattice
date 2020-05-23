@@ -45,6 +45,7 @@ export default class RowNode extends Node {
 
     // mount cell components
     this.cells.forEach((cell, index) => {
+      let bounds = this.bounds
       let manager = this.manager
       let left = this.bounds.width
       let definition = manager.options.definitions[index]
@@ -60,7 +61,7 @@ export default class RowNode extends Node {
       })
 
       // extend row bounds
-      this.bounds.extend(cell.getBoundingRectangle())
+      bounds.extend(cell.getBoundingRectangle())
     })
   }
 }
