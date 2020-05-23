@@ -62,6 +62,7 @@ export default class ComponentBase {
   getZeroedBoundingRectangle(): Rectangle {
     let rect = this.getBoundingRectangle()
         rect.width = 0
+        rect.height = 0
     return rect
   }
 
