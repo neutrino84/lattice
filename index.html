@@ -27,6 +27,9 @@
     #grid .header {
       background: #dfdfdf;
     }
+    #grid .grid {
+      overflow: auto;
+    }
     #grid .column-cell,
     #grid .cell {
       position: absolute;
@@ -45,11 +48,11 @@
   <script type="module">
     import Grid from './dist/ngrid.esm.js'
 
-    let words = ['hamburger', 'cheese', 'nuts', 'pizza', 'and', 'or', 'meat', 'fruit']
+    let words = ['hamburger', 'cheese', 'nuts', 'pizza', 'potatoes', 'brocolli', 'meat', 'fruit', 'candy', 'ice cream', 'chicken', 'onions', 'pickles']
     let random = num => {
       let index
       let string = []
-      for (let i=0; i<=num; i++) {
+      for (let i=0; i<num; i++) {
         index = Math.floor(Math.random() * words.length)
         string.push(words[index])
       }
@@ -60,8 +63,8 @@
     for (let i=0; i<30; i++) {
       data.push({
         id: i + '000',
-        title: random(3),
-        description: random(5),
+        title: random(2),
+        description: random(6),
       })
     }
     
