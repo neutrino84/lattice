@@ -1,6 +1,11 @@
+import Rectangle from "../../geometry/Rectangle"
+
 export default abstract class Node {
-  parent: Node | undefined
-  children: Node[] = []
+  public parent: Node | undefined
+  public children: Node[] = []
+  public previous: Node | undefined
+  public next: Node | undefined
+  public bounds: Rectangle = new Rectangle()
 
   constructor() {
     //..

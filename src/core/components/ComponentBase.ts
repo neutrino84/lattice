@@ -1,4 +1,5 @@
 import { el, mount, unmount, setAttr } from 'redom'
+import Rectangle from '../../geometry/Rectangle'
 
 export interface ComponentOptions {
   name: string
@@ -41,7 +42,7 @@ export default class ComponentBase {
     this.el.textContent = content
   }
 
-  mount(parent: HTMLElement, before: HTMLElement | undefined = undefined, replace: boolean | undefined = undefined): void {
+  mount(parent: HTMLElement, before?: HTMLElement, replace?: boolean): void {
     mount(parent, this.el, before, replace)
   }
 
@@ -52,6 +53,16 @@ export default class ComponentBase {
     } else {
       throw new Error('You can not unmount an element with no parent')
     }
+  }
+
+  getBoundingRectangle(): Rectangle {
+    return new Rectangle(this.el.getBoundingClientRect())
+  }
+
+  getZeroedBoundingRectangle(): Rectangle {
+    let rect = this.getBoundingRectangle()
+        rect.width = 0
+    return rect
   }
 
   destroy(): void {
