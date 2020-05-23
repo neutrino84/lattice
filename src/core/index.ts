@@ -1,4 +1,5 @@
 
+import EventEmitter from 'eventemitter3'
 import ModuleRegistry from './ModuleRegistry'
 import GridManager from './modules/grid/GridManager'
 import ColumnManager from './modules/column/ColumnManager'
@@ -21,7 +22,7 @@ export interface GridOptions {
   definitions: ColumnDefinition[]
 }
 
-export default class Core {
+export default class Core extends EventEmitter {
   public options: GridOptions
   public root: HTMLElement
   public registry: ModuleRegistry
@@ -32,6 +33,8 @@ export default class Core {
   public grid: GridComponent
 
   constructor(options: GridOptions) {
+    super()
+
     this.options = options
     if (typeof options.element === 'string') {
       let element = document.getElementById(options.element)
