@@ -19,10 +19,11 @@ export type ColumnDefinition = {
 }
 
 export interface GridOptions {
-  debug: boolean
   element: HTMLElement | string
   data: any[]
   definitions: ColumnDefinition[]
+  classes?: string[] | Function
+  debug?: boolean
 }
 
 export default class Core extends EventEmitter {
