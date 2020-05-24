@@ -1,12 +1,15 @@
 
 import EventEmitter from 'eventemitter3'
 import ModuleRegistry from './ModuleRegistry'
+
 import GridManager from './modules/grid/GridManager'
 import ColumnManager from './modules/column/ColumnManager'
 import RowManager from './modules/row/RowManager'
+import ScrollManager from './modules/scroll/ScrollManager'
+
 import HeaderComponent from './components/HeaderComponent'
-import FooterComponent from './components/FooterComponent'
 import GridComponent from './components/GridComponent'
+
 import Logger from './Logger'
 
 export type ColumnDefinition = {
@@ -29,7 +32,6 @@ export default class Core extends EventEmitter {
   public logger: Logger
 
   public header: HeaderComponent
-  public footer: FooterComponent
   public grid: GridComponent
 
   constructor(options: GridOptions) {
@@ -52,18 +54,35 @@ export default class Core extends EventEmitter {
     // instantiate root components
     this.header = new HeaderComponent()
     this.grid = new GridComponent()
-    this.footer = new FooterComponent()
 
     // initialize base components
     this.header.mount(this.root)
     this.grid.mount(this.root)
-    this.footer.mount(this.root)
 
     // instantiate logger
     this.logger = new Logger(options.debug)
 
     // instantiate module registry
+    // the order these are passed matters
     this.registry = new ModuleRegistry(this)
-    this.registry.init([GridManager, ColumnManager, RowManager])
+    this.registry.init([
+      ColumnManager,
+      GridManager,
+      ScrollManager,
+      RowManager,
+    ])
+  }
+
+  destroy(): void {
+    this.header.destroy()
+    this.grid.destroy()
+    this.registry.destroy()
+
+    delete this.root
+    delete this.options
+    delete this.header
+    delete this.grid
+    delete this.logger
+    delete this.registry
   }
 }
