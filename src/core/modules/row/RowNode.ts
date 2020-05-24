@@ -10,8 +10,6 @@ export type RowOptions = {
 }
 
 export default class RowNode extends Node {
-  public static DEFAULT_WIDTH = 180
-
   public data: any
   public manager: RowManager
   public component: RowComponent | null
@@ -29,7 +27,9 @@ export default class RowNode extends Node {
 
   create(): void {
     // create row component and mount
-    this.component = new RowComponent() // load from pool
+    // TODO: create PooledRowNodeFactory
+    // TODO: look into DocumentFragment
+    this.component = new RowComponent()
     this.component.mount(this.manager.component.el)
     this.component.attributes({
       style: {
@@ -55,9 +55,8 @@ export default class RowNode extends Node {
       let bounds = this.bounds
       let left = this.bounds.width
       let definition = this.definitions[index]
-      let width = definition.width || RowNode.DEFAULT_WIDTH
+      let width = definition.width
 
-      // configure cell
       if (this.component) {
         cell.mount(this.component.el)
         cell.attributes({
@@ -76,6 +75,8 @@ export default class RowNode extends Node {
   }
 
   render(): void {
-
+    this.cells.forEach((cell, index) => {
+      //.. render row
+    })
   }
 }

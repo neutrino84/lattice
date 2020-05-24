@@ -4,16 +4,18 @@ import Module from '../Module'
 import GridComponent from '../../components/GridComponent'
 import RowNode from '../../modules/row/RowNode'
 import Rectangle from '../../../geometry/Rectangle'
+import GridManager from '../grid/GridManager'
+import ScrollManager from '../scroll/ScrollManager'
 
 export default class RowManager extends Module {
-  public static SCROLL_POLLING_RATE_MS = 500
-
   public data: any[]
   public definitions: ColumnDefinition[]
   public component: GridComponent
-  public debounce: NodeJS.Timeout | undefined
   public bounds: Rectangle = new Rectangle()
   public nodes: RowNode[] = []
+
+  public grid: GridManager | undefined
+  public scroll: ScrollManager | undefined
 
   constructor(core: Core) {
     super(core)
@@ -29,49 +31,62 @@ export default class RowManager extends Module {
   public init(): void {
     super.init()
 
-    this.create()
+    // manager references
+    this.grid = this.core.registry.get<GridManager>('GridManager')
+    this.scroll = this.core.registry.get<ScrollManager>('ScrollManager')
   }
 
   /*
    *
    */
-  public create(): void {
-    // initialize grid bounds
-    this.bounds = this.core.grid.getZeroedBoundingRectangle()
-
-    // initialize row nodes
-    this.data.forEach((item: any) => {
-      let node
-      let bounds = this.bounds
-      let nodes = this.nodes
+  public mount(): void {
+    let node: RowNode,
+        bounds: Rectangle,
+        data = this.data,
+        nodes = this.nodes,
+        grid = this.grid,
+        scroll = this.scroll
+    if (grid && grid.boundaries.grid) {
+      // initialize boundary for row nodes
+      bounds = this.bounds = grid.boundaries.grid.cloneZeroed()
       
-      // instantiate node
-      node = new RowNode({
-        manager: this,
-        data: item,
+      // build row nodes
+      data.forEach((item: any) => {
+        node = new RowNode({
+          manager: this,
+          data: item,
+        })
+
+        // create node if within view distance
+        if (scroll) {
+          if (scroll.bounds.bottom >= bounds.bottom) {
+            if (scroll.bounds.top <= bounds.top) {
+              node.create()
+            }
+          } else {
+            //.. expand scroll bounds height
+          }
+        } else {
+          node.create()
+        }
+
+        // add node
+        nodes.push(node)
+
+        // extend boundary
+        // to include new node
+        bounds.extend(node.bounds)
       })
-
-      // create node if within renderable
-      // if (boundary.bottom > bounds.bottom) {
-        node.create()
-      // }
-
-      // add node
-      nodes.push(node)
-
-      // extend local bounds
-      bounds.extend(node.bounds)
-    })
-
-    // notify rows rendered
-    this.core.emit('row:nodes:created', this.nodes)
+    } else {
+      throw new Error('RowManager requires GridManager module to function')
+    }
   }
 
   /*
    *
    */
   public render(): void {
-    this.data.forEach((item: any) => {
+    this.nodes.forEach((item: any) => {
       //.. redraw
     })
   }
