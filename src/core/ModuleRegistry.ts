@@ -13,6 +13,9 @@ export default class ModuleRegistry {
     this.core = core
   }
 
+  /*
+   * Module lifecyle methods
+   */
   init(modules: ModuleClass<Module>[]): void {
     // instantiate modules
     modules.forEach(Module => this.add(Module))
@@ -21,14 +24,24 @@ export default class ModuleRegistry {
     this.modules.forEach(module => {
       module.init()
     })
+
+    // mount modules
+    this.modules.forEach(module => {
+      module.mount()
+    })
+
+    // run mounted logic
+    this.modules.forEach(module => {
+      module.mounted()
+    })
   }
 
   add(Module: ModuleClass<Module>): void {
     this.modules.set(Module.name, new Module(this.core))
   }
 
-  get(name: string): Module | undefined {
-    return this.modules.get(name)
+  get<T extends Module>(name: string): T | undefined {
+    return this.modules.get(name) as T
   }
 
   destroy(): void {
