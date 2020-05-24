@@ -2,7 +2,7 @@ import Core from '.'
 import Module from './modules/Module'
 
 export interface ModuleClass<T> extends Function {
-  new (...args: any[]): T
+  new (core: Core): T
 }
 
 export default class ModuleRegistry {
