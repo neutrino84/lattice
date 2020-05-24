@@ -61,7 +61,7 @@ export default class Core extends EventEmitter {
     this.grid.mount(this.root)
 
     // instantiate logger
-    this.logger = new Logger(options.debug)
+    this.logger = new Logger(options.debug || false)
 
     // instantiate module registry
     // the order these are passed matters
