@@ -17,6 +17,8 @@ export default class GridManager extends Module {
    */
   constructor(core: Core) {
     super(core)
+
+    this.core.grid.on('scroll', this.onscroll.bind(this))
   }
 
   /*
@@ -61,6 +63,15 @@ export default class GridManager extends Module {
         }
       })
       boundaries.grid = root
+    }
+  }
+
+  /*
+   *
+   */
+  public onscroll(): void {
+    if (this.column) {
+      this.core.header.el.scrollLeft = this.core.grid.el.scrollLeft
     }
   }
 
