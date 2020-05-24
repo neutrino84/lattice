@@ -14,7 +14,7 @@
       font-size: 16px;
       line-height: 20px;
       width: 1024px;
-      height: 512px;
+      height: 540px;
       background: #f4f4f4;
     }
     #grid .header,
@@ -34,7 +34,7 @@
     #grid .cell {
       position: absolute;
       overflow: hidden;
-      padding: 2px 20px 2px 5px;
+      padding: 5px 20px 5px 5px;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
@@ -60,11 +60,13 @@
     }
 
     let data = []
-    for (let i=0; i<30; i++) {
+    for (let i=0; i<250; i++) {
       data.push({
         id: i + '000',
         title: random(2),
         description: random(6),
+        category: random(1),
+        type: random(1),
       })
     }
     
@@ -79,6 +81,14 @@
       }, {
         name: 'title',
         field: 'title',
+        width: 180,
+      }, {
+        name: 'category',
+        field: 'category',
+        width: 180,
+      }, {
+        name: 'type',
+        field: 'type',
         width: 180,
       }, {
         name: 'description',
