@@ -4,7 +4,6 @@ export default class GridComponent extends ComponentBase {
   constructor() {
     super({
       name: 'grid',
-      classes: ['grid'],
     })
   }
 }

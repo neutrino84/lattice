@@ -23,11 +23,11 @@ export default class ComponentBase {
 
   constructor(options: ComponentOptions) {
     this.id = ComponentBase.id =+ 1
-    this.name = options.name + '-' + this.id
+    this.name = options.name
     this.tag = options.tag || 'div'
     this.display = options.display || true
     this.visible = options.visible || true
-    this.classes = options.classes || []
+    this.classes = options.classes || [options.name]
     this.el = options.el || el(this.tag, options.content || '')
     this.attributes({
       'class': this.classes.join(' '),

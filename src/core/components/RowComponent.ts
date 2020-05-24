@@ -4,7 +4,6 @@ export default class RowComponent extends ComponentBase {
   constructor() {
     super({
       name: 'row',
-      classes: ['row'],
     })
   }
 }
