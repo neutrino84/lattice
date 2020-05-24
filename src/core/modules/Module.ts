@@ -11,6 +11,18 @@ export default abstract class Module {
     this.core.logger.log('successfully initilized ' + this.constructor.name + ' module')
   }
 
+  mount(): void {
+    //.. mount module components
+  }
+
+  mounted(): void {
+    //.. logic once components are mounted
+  }
+
+  resize(): void {
+    //.. resize modules components
+  }
+
   destroy(): void {
     delete this.core
   }
