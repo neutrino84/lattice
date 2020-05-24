@@ -1,12 +1,22 @@
 import Core from '../..'
 import Module from '../Module'
+import Rectangle from '../../../geometry/Rectangle'
+import ColumnManager from '../column/ColumnManager'
+
+export type GridBoundaries = {
+  root?: Rectangle
+  grid?: Rectangle
+}
 
 export default class GridManager extends Module {
+  column: ColumnManager | undefined
+  boundaries: GridBoundaries = {}
+
+  /*
+   *
+   */
   constructor(core: Core) {
     super(core)
-
-    // subscribe listeners
-    this.core.on('column:nodes:created', this.resize, this)
   }
 
   /*
@@ -14,23 +24,44 @@ export default class GridManager extends Module {
    */
   public init(): void {
     super.init()
+
+    // manager references
+    this.column = this.core.registry.get<ColumnManager>('ColumnManager')
+  }
+
+  /*
+   *
+   */
+  public mount(): void {
+    this.resize()
   }
 
   /*
    *
    */
   public resize(): void {
+    let height
     let core = this.core
-    let rrect = core.root.getBoundingClientRect()
-    let hrect = core.header.getBoundingRectangle()
-    let frect = core.footer.getBoundingRectangle()
-    let height = rrect.height - frect.height - hrect.height
+    let column = this.column
+    let boundaries = this.boundaries
+    let root = boundaries.root = new Rectangle(core.root.getBoundingClientRect())
 
-    core.grid.attributes({
-      style: {
-        height: height + 'px'
-      }
-    })
+    if (column) {
+      height = root.height - column.bounds.height
+      core.grid.attributes({
+        style: {
+          height: height + 'px'
+        }
+      })
+      boundaries.grid = core.grid.getBoundingRectangle()
+    } else {
+      core.grid.attributes({
+        style: {
+          height: root.height + 'px'
+        }
+      })
+      boundaries.grid = root
+    }
   }
 
   /*
