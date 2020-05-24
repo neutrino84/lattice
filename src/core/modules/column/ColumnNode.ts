@@ -3,8 +3,6 @@ import ColumnCellComponent from '../../components/ColumnCellComponent'
 import { ColumnDefinition } from '../..'
 
 export default class ColumnNode {
-  public static DEFAULT_WIDTH = 180
-
   public index: number
   public width: number
   public manager: ColumnManager
@@ -15,7 +13,7 @@ export default class ColumnNode {
     this.manager = manager
     this.definition = definition
     this.index = manager.options.definitions.indexOf(definition)
-    this.width = definition.width || ColumnNode.DEFAULT_WIDTH
+    this.width = definition.width
 
     // create column row component and mount
     this.component = new ColumnCellComponent(definition.name)

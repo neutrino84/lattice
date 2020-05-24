@@ -17,15 +17,18 @@ export default class ColumnManager extends Module {
 
     this.options = core.options
     this.component = new ColumnRowComponent()
-    this.component.mount(this.core.header.el)
   }
 
   public init(): void {
     super.init()
 
-    // update local bounds w/ component
-    // width zeroed (to help align column components)
+    // update local bounds w/ component bounds
+    // zeroed (to align column components)
     this.bounds = this.component.getZeroedBoundingRectangle()
+  }
+
+  public mount(): void {
+    this.component.mount(this.core.header.el)
 
     // initialize row nodes
     this.options.definitions.forEach(definition => {
@@ -33,12 +36,14 @@ export default class ColumnManager extends Module {
       let bounds = this.bounds
       let node = new ColumnNode(this, definition)
 
+      // add node to collection
       nodes.push(node)
 
       // extend local bounds
       bounds.extend(node.component.getBoundingRectangle())
     })
 
+    //
     this.component.attributes({
       style: {
         height: this.bounds.height + 'px'
