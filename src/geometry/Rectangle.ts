@@ -28,5 +28,16 @@ export default class Rectangle extends DOMRect {
         return false
       }
     } else return false
-	};
+  }
+
+  clone(): Rectangle {
+    return new Rectangle(this)
+  }
+
+  cloneZeroed(): Rectangle {
+    let rect = new Rectangle(this)
+        rect.width = 0
+        rect.height = 0
+    return rect
+  }
 }
