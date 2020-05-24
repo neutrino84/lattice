@@ -42,6 +42,10 @@ export default class ComponentBase {
     this.el.textContent = content
   }
 
+  on(name: string, listener: (this: HTMLElement, ev: Event) => any): void {
+    this.el.addEventListener(name, listener)
+  }
+
   mount(parent: HTMLElement, before?: HTMLElement, replace?: boolean): void {
     mount(parent, this.el, before, replace)
   }
