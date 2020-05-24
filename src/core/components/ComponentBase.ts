@@ -12,14 +12,15 @@ export interface ComponentOptions {
 }
 export default class ComponentBase {
   private static id: number = 0
-  private id: number = 0
 
-  name: string
-  tag: string
-  display: boolean
-  visible: boolean
-  classes: string[]
-  el: HTMLElement
+  public id: number = 0
+  public name: string
+  public tag: string
+  public display: boolean
+  public visible: boolean
+  public classes: string[]
+  public class: string
+  public el: HTMLElement
 
   constructor(options: ComponentOptions) {
     this.id = ComponentBase.id =+ 1
@@ -28,14 +29,34 @@ export default class ComponentBase {
     this.display = options.display || true
     this.visible = options.visible || true
     this.classes = options.classes || [options.name]
+    this.class = this.classes.join(' ')
     this.el = options.el || el(this.tag, options.content || '')
     this.attributes({
-      'class': this.classes.join(' '),
+      'class': this.class,
     })
   }
 
   attributes(value: object) {
     setAttr(this.el, value)
+  }
+
+  addClass(name: string): void {
+    this.classes.push(name)
+    this.class = this.classes.join(' ')
+    setAttr(this.el, 'class', this.class)
+  }
+
+  removeClass(name: string): void {
+    let index = this.classes.indexOf(name)
+    if (index >= 0) {
+      this.classes.splice(index, 1)
+      this.class = this.classes.join(' ')
+      setAttr(this.el, 'class', this.class)
+    }
+  }
+
+  hasClass(name: string): boolean {
+    return this.classes.indexOf(name) >= 0
   }
 
   update(content: string): void {
