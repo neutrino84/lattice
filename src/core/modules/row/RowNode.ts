@@ -51,7 +51,7 @@ export default class RowNode extends Node {
 
     // create cell components
     this.definitions.forEach((definition) => {
-      let cached, identifier
+      let cached, id
       let cache = RowNode.cache
       let bounds = this.bounds
       let component = this.component
@@ -71,11 +71,11 @@ export default class RowNode extends Node {
         })
 
         // use cached cell boundaries
-        identifier = component.class + definition.field
-        cached = cache.get(identifier)
+        id = component.class + definition.field
+        cached = cache.get(id)
         if (!cached) {
           cached = cell.getBoundingRectangle()
-          cache.set(identifier, cached)
+          cache.set(id, cached)
         }
         cached.y = bounds.y
 
