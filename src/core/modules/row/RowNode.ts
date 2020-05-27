@@ -1,7 +1,8 @@
 import Node from '../Node'
-import RowManager from '../row/RowManager'
+import RowManager from './RowManager'
 import RowComponent from '../../components/RowComponent'
 import CellComponent from '../../components/CellComponent'
+import Rectangle from '../../../geometry/Rectangle'
 import { ColumnDefinition } from '../..'
 
 export type RowOptions = {
@@ -10,11 +11,16 @@ export type RowOptions = {
 }
 
 export default class RowNode extends Node {
+  private static cache = new Map<string, Rectangle>()
+
   public data: any
   public manager: RowManager
   public component: RowComponent | null
   public cells: CellComponent[] = []
   public definitions: ColumnDefinition[]
+
+  public mounted = false
+  public bounds = new Rectangle()
 
   constructor(options: RowOptions) {
     super()
@@ -25,10 +31,12 @@ export default class RowNode extends Node {
     this.component = null
   }
 
-  create(): void {
-    // create row component and mount
-    // TODO: create PooledRowNodeFactory
-    // TODO: look into DocumentFragment
+  mount(): void {
+    if (this.mounted) {
+      throw new Error('cannot re-mount a mounted row node')
+    }
+
+    // create component and mount
     this.component = new RowComponent()
     this.component.mount(this.manager.component.el)
     this.component.attributes({
@@ -37,46 +45,55 @@ export default class RowNode extends Node {
       }
     })
 
-    // update local bounds w/ component
-    // width zeroed (to help align cell components)
-    this.bounds = this.component.getZeroedBoundingRectangle()
+    // set node boundaries
+    this.bounds.x = this.manager.bounds.x
+    this.bounds.y = this.manager.bounds.y + this.manager.bounds.height
 
     // create cell components
     this.definitions.forEach((definition) => {
-      let cells = this.cells
+      let cached, identifier
+      let cache = RowNode.cache
+      let bounds = this.bounds
+      let component = this.component
       let value = this.data[definition.field]
+      let left = this.bounds.width
+      let width = definition.width
       let cell = new CellComponent(value)
 
-      cells.push(cell)
-    })
-
-    // mount cell components
-    this.cells.forEach((cell, index) => {
-      let bounds = this.bounds
-      let left = this.bounds.width
-      let definition = this.definitions[index]
-      let width = definition.width
-
-      if (this.component) {
-        cell.mount(this.component.el)
+      if (component) {
+        // mount cells
+        cell.mount(component.el)
         cell.attributes({
           style: {
             width: width + 'px',
             left: left + 'px',
           }
         })
-      } else {
-        //.. throw error
+
+        // use cached cell boundaries
+        identifier = component.class + definition.field
+        cached = cache.get(identifier)
+        if (!cached) {
+          cached = cell.getBoundingRectangle()
+          cache.set(identifier, cached)
+        }
+        cached.y = bounds.y
+
+        // update node boundary
+        bounds.extend(cached)
       }
 
-      // extend row bounds
-      bounds.extend(cell.getBoundingRectangle())
+      // add cell to collection
+      this.cells.push(cell)
     })
+
+    // mount successful
+    this.mounted = true
   }
 
   render(): void {
     this.cells.forEach((cell, index) => {
-      //.. render row
+      cell.update(this.data[index])
     })
   }
 }

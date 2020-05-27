@@ -11,11 +11,12 @@ export default class RowManager extends Module {
   public data: any[]
   public definitions: ColumnDefinition[]
   public component: GridComponent
-  public bounds: Rectangle = new Rectangle()
-  public nodes: RowNode[] = []
 
   public grid: GridManager | undefined
   public scroll: ScrollManager | undefined
+
+  public bounds: Rectangle = new Rectangle()
+  public nodes: RowNode[] = []
 
   constructor(core: Core) {
     super(core)
@@ -53,32 +54,35 @@ export default class RowManager extends Module {
       // build row nodes
       data.forEach((item: any) => {
         node = new RowNode({
-          manager: this,
-          data: item,
+            manager: this,
+            data: item,
         })
 
-        // create node if within view distance
+        // create node if within
+        // renderable rect
         if (scroll) {
           if (scroll.bounds.bottom >= bounds.bottom) {
             if (scroll.bounds.top <= bounds.top) {
-              node.create()
+              node.mount()
+
+              // extend boundary to
+              // include mounted node
+              bounds.extend(node.bounds)
             }
           } else {
-            //.. expand scroll bounds height
+            // expand scroll bounds height
+            // such that the scroll distance
+            // is represented correctly
           }
         } else {
-          node.create()
+          node.mount()
         }
 
         // add node
         nodes.push(node)
-
-        // extend boundary
-        // to include new node
-        bounds.extend(node.bounds)
       })
     } else {
-      throw new Error('RowManager requires GridManager module to function')
+      throw new Error('RowManager module requires GridManager module to be registered')
     }
   }
 
