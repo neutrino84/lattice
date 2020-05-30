@@ -35,7 +35,7 @@
     #grid .cell {
       position: absolute;
       overflow: hidden;
-      padding: 5px 20px 5px 5px;
+      padding: 10px 20px 10px 5px;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
@@ -50,24 +50,26 @@
     import Grid from './dist/ngrid.esm.js'
 
     let words = ['hamburger', 'cheese', 'nuts', 'pizza', 'potatoes', 'brocolli', 'meat', 'fruit', 'candy', 'ice cream', 'chicken', 'onions', 'pickles']
-    let random = num => {
+    let types = ['title', '', '', '', '']
+    let random = (num, arr) => {
       let index
       let string = []
+      let list = arr || words
       for (let i=0; i<num; i++) {
-        index = Math.floor(Math.random() * words.length)
-        string.push(words[index])
+        index = Math.floor(Math.random() * list.length)
+        string.push(list[index])
       }
       return string.join(' ')
     }
 
     let data = []
-    for (let i=0; i<250; i++) {
+    for (let i=0; i<100; i++) {
       data.push({
         id: i + '000',
         title: random(2),
         description: random(6),
         category: random(1),
-        type: random(1),
+        type: random(1, types),
       })
     }
     
@@ -75,6 +77,7 @@
       debug: true,
       element: 'grid',
       data: data,
+      classes: (data) => { return [data['type']] },
       definitions: [{
         name: 'code',
         field: 'id',
