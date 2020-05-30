@@ -31,37 +31,41 @@ export default class RowNode extends Node {
     this.component = null
   }
 
+  /*
+   * 
+   */
   mount(): void {
-    if (this.mounted) {
-      throw new Error('cannot re-mount a mounted row node')
-    }
+    let component: RowComponent
+    let manager = this.manager
+    let cells = this.cells
+    let bounds = this.bounds
+    let data = this.data
+    let definitions = this.definitions
 
     // create component and mount
-    this.component = new RowComponent()
-    this.component.mount(this.manager.component.el)
-    this.component.attributes({
+    component = this.component = new RowComponent(this)
+    component.mount(manager.component.el)
+    component.attributes({
       style: {
-        top: this.manager.bounds.height + 'px'
+        top: manager.bounds.height + 'px'
       }
     })
 
     // set node boundaries
-    this.bounds.x = this.manager.bounds.x
-    this.bounds.y = this.manager.bounds.y + this.manager.bounds.height
+    bounds.x = manager.bounds.x
+    bounds.y = manager.bounds.y + manager.bounds.height
 
     // create cell components
-    this.definitions.forEach((definition) => {
+    definitions.forEach((definition) => {
       let cached, id
       let cache = RowNode.cache
-      let bounds = this.bounds
-      let component = this.component
-      let value = this.data[definition.field]
-      let left = this.bounds.width
+      let value = data[definition.field]
+      let left = bounds.width
       let width = definition.width
       let cell = new CellComponent(value)
 
       if (component) {
-        // mount cells
+        // mount cell
         cell.mount(component.el)
         cell.attributes({
           style: {
@@ -71,7 +75,8 @@ export default class RowNode extends Node {
         })
 
         // use cached cell boundaries
-        id = component.class + definition.field
+        // to improve performance
+        id = component.classes.join('-') + '-' + definition.field
         cached = cache.get(id)
         if (!cached) {
           cached = cell.getBoundingRectangle()
@@ -84,16 +89,32 @@ export default class RowNode extends Node {
       }
 
       // add cell to collection
-      this.cells.push(cell)
+      cells.push(cell)
     })
-
-    // mount successful
-    this.mounted = true
   }
 
   render(): void {
-    this.cells.forEach((cell, index) => {
-      cell.update(this.data[index])
-    })
+    //..
+  }
+
+  show(): void {
+    //..
+  }
+
+  hide(): void {
+    //..
+  }
+
+  classes(): string[] {
+    let base = ['row']
+    let options = this.manager.core.options
+    let classes = options.classes
+    if (typeof classes === 'function') {
+      return classes(this.data).concat(base)
+    } else if(classes) {
+      return classes.concat(base)
+    } else {
+      return base
+    }
   }
 }
