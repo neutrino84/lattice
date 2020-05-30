@@ -15,8 +15,8 @@ export default class RowManager extends Module {
   public grid: GridManager | undefined
   public scroll: ScrollManager | undefined
 
-  public bounds: Rectangle = new Rectangle()
   public nodes: RowNode[] = []
+  public bounds: Rectangle = new Rectangle()
 
   constructor(core: Core) {
     super(core)
@@ -45,41 +45,27 @@ export default class RowManager extends Module {
         bounds: Rectangle,
         data = this.data,
         nodes = this.nodes,
-        grid = this.grid,
-        scroll = this.scroll
+        grid = this.grid
     if (grid && grid.boundaries.grid) {
       // initialize boundary for row nodes
       bounds = this.bounds = grid.boundaries.grid.cloneZeroed()
       
       // build row nodes
       data.forEach((item: any) => {
+        // instantiate new row node
         node = new RowNode({
             manager: this,
             data: item,
         })
 
-        // create node if within
-        // renderable rect
-        if (scroll) {
-          if (scroll.bounds.bottom >= bounds.bottom) {
-            if (scroll.bounds.top <= bounds.top) {
-              node.mount()
-
-              // extend boundary to
-              // include mounted node
-              bounds.extend(node.bounds)
-            }
-          } else {
-            // expand scroll bounds height
-            // such that the scroll distance
-            // is represented correctly
-          }
-        } else {
-          node.mount()
-        }
+        // mount node
+        node.mount()
 
         // add node
         nodes.push(node)
+
+        // extend row manager bounds
+        bounds.extend(node.bounds)
       })
     } else {
       throw new Error('RowManager module requires GridManager module to be registered')
@@ -90,7 +76,7 @@ export default class RowManager extends Module {
    *
    */
   public render(): void {
-    this.nodes.forEach((item: any) => {
+    this.nodes.forEach((node) => {
       //.. redraw
     })
   }
