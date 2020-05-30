@@ -1,6 +1,7 @@
 
 import EventEmitter from 'eventemitter3'
 import ModuleRegistry from './ModuleRegistry'
+import Logger from './Logger'
 
 import GridManager from './modules/grid/GridManager'
 import ColumnManager from './modules/column/ColumnManager'
@@ -9,8 +10,6 @@ import ScrollManager from './modules/scroll/ScrollManager'
 
 import HeaderComponent from './components/HeaderComponent'
 import GridComponent from './components/GridComponent'
-
-import Logger from './Logger'
 
 export type ColumnDefinition = {
   name: string
@@ -22,7 +21,7 @@ export interface GridOptions {
   element: HTMLElement | string
   data: any[]
   definitions: ColumnDefinition[]
-  classes?: string[] | Function
+  classes?: string[] | ((data:any) => string[])
   debug?: boolean
 }
 
