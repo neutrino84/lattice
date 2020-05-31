@@ -13,8 +13,4 @@ export default class RowComponent extends ComponentBase {
     })
     this.node = node
   }
-
-  update(data: any): void {
-
-  }
 }

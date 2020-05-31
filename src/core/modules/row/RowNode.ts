@@ -11,8 +11,8 @@ export type RowOptions = {
 }
 
 export default class RowNode extends Node {
-  // TODO: Create RowNodeBoundaryCache
   private static cache = new Map<string, Rectangle>()
+  private static pool = new Map<string, RowComponent[]>()
 
   public data: any
   public manager: RowManager
@@ -20,7 +20,7 @@ export default class RowNode extends Node {
   public definitions: ColumnDefinition[]
 
   public mounted = false
-  public visible = false
+  public display = false
   public bounds = new Rectangle()
 
   constructor(options: RowOptions) {
@@ -32,6 +32,9 @@ export default class RowNode extends Node {
     this.component = null
   }
 
+  /*
+   * 
+   */
   init(): void {
     let cached
     let cache = RowNode.cache
@@ -115,15 +118,53 @@ export default class RowNode extends Node {
   }
 
   update(): void {
-    this.component && this.component.update(this.data)
+    this.definitions.forEach((definition, index) => {
+      this.component && this.component.cells[index].update(this.data[definition.field])
+    })
   }
 
   show(): void {
-    //..
+    let component
+    let bounds = this.bounds
+    let pool = RowNode.pool
+    if (!this.component) {
+      let id = this.classes().join('-')
+      let collection = pool.get(id)
+      if (collection) {
+        component = collection.pop()
+        if (component) {
+          this.component = component
+          this.component.attributes({
+            style: {
+              visibility: 'visible',
+              transform: 'translate(0, ' + (bounds.y - bounds.height) + 'px)',
+            }
+          })
+          this.update()
+        } else {
+          // mount new component
+        }
+      }
+    }
   }
 
   hide(): void {
-    //..
+    let pool = RowNode.pool
+    if (this.component) {
+      let id = this.classes().join('-')
+      let collection = pool.get(id)
+      if (!collection) {
+        pool.set(id, [this.component])
+      } else {
+        collection.push(this.component)
+      }
+      this.component.attributes({
+        style: {
+          visibility: 'hidden'
+        }
+      })
+      this.component = null
+    }
   }
 
   classes(): string[] {
