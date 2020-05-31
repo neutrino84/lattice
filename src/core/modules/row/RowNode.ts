@@ -11,15 +11,16 @@ export type RowOptions = {
 }
 
 export default class RowNode extends Node {
+  // TODO: Create RowNodeBoundaryCache
   private static cache = new Map<string, Rectangle>()
 
   public data: any
   public manager: RowManager
   public component: RowComponent | null
-  public cells: CellComponent[] = []
   public definitions: ColumnDefinition[]
 
   public mounted = false
+  public visible = false
   public bounds = new Rectangle()
 
   constructor(options: RowOptions) {
@@ -31,23 +32,42 @@ export default class RowNode extends Node {
     this.component = null
   }
 
+  init(): void {
+    let cached
+    let cache = RowNode.cache
+    let id = this.classes().join('-')
+    let manager = this.manager
+    let bounds = this.bounds
+
+    // set node boundaries
+    bounds.x = manager.bounds.x
+    bounds.y = manager.bounds.y + manager.bounds.height
+
+    // get cached bounds
+    cached = cache.get(id)
+    if (cached) {
+      bounds.width = cached.width
+      bounds.height = cached.height
+    } else {
+      this.mount()
+    }
+  }
+
   /*
    * 
    */
   mount(): void {
-    let component: RowComponent
     let manager = this.manager
-    let cells = this.cells
     let bounds = this.bounds
     let data = this.data
     let definitions = this.definitions
+    let component = this.component = new RowComponent(this)
 
     // create component and mount
-    component = this.component = new RowComponent(this)
     component.mount(manager.component.el)
     component.attributes({
       style: {
-        top: manager.bounds.height + 'px'
+        transform: 'translate(0, ' + manager.bounds.height + 'px)',
       }
     })
 
@@ -64,37 +84,38 @@ export default class RowNode extends Node {
       let width = definition.width
       let cell = new CellComponent(value)
 
-      if (component) {
-        // mount cell
-        cell.mount(component.el)
-        cell.attributes({
-          style: {
-            width: width + 'px',
-            left: left + 'px',
-          }
-        })
-
-        // use cached cell boundaries
-        // to improve performance
-        id = component.classes.join('-') + '-' + definition.field
-        cached = cache.get(id)
-        if (!cached) {
-          cached = cell.getBoundingRectangle()
-          cache.set(id, cached)
+      // mount and style
+      cell.mount(component.el)
+      cell.attributes({
+        style: {
+          width: width + 'px',
+          left: left + 'px',
         }
-        cached.y = bounds.y
+      })
 
-        // update node boundary
-        bounds.extend(cached)
+      // use cached cell boundaries
+      // to improve performance
+      id = component.classes.join('-')
+      cached = cache.get(id + '-' + definition.field)
+      if (!cached) {
+        cached = cell.getBoundingRectangle()
+        cache.set(id + '-' + definition.field, cached)
       }
+      cached.y = bounds.y
+
+      // update node bounds
+      bounds.extend(cached)
+
+      // cache node bounds
+      cache.set(id, bounds)
 
       // add cell to collection
-      cells.push(cell)
+      component.cells.push(cell)
     })
   }
 
-  render(): void {
-    //..
+  update(): void {
+    this.component && this.component.update(this.data)
   }
 
   show(): void {
