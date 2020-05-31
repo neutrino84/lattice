@@ -55,14 +55,17 @@ export default class RowManager extends Module {
     let scroll = this.scroll
     let component = this.component
     if (grid && grid.boundaries.grid) {
+      // initialize row manager boundary
       bounds = this.bounds = grid.boundaries.grid.cloneZeroed()
+
+      // create nodes from data
       data.forEach((item: any) => {
-        //
         node = new RowNode({
             manager: this,
             data: item,
         })
 
+        // mount or init
         if (scroll) {
           if (scroll.bounds.contains(bounds)) {
             node.mount()
