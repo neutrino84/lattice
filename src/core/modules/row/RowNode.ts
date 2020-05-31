@@ -57,6 +57,7 @@ export default class RowNode extends Node {
    * 
    */
   mount(): void {
+    let cache = RowNode.cache
     let manager = this.manager
     let bounds = this.bounds
     let data = this.data
@@ -78,7 +79,6 @@ export default class RowNode extends Node {
     // create cell components
     definitions.forEach((definition) => {
       let cached, id
-      let cache = RowNode.cache
       let value = data[definition.field]
       let left = bounds.width
       let width = definition.width
