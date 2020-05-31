@@ -1,17 +1,16 @@
 
 import Core, { ColumnDefinition } from '../..'
 import Module from '../Module'
-import GridComponent from '../../components/GridComponent'
 import RowNode from '../../modules/row/RowNode'
 import Rectangle from '../../../geometry/Rectangle'
 import GridManager from '../grid/GridManager'
 import ScrollManager from '../scroll/ScrollManager'
-import ComponentBase from '../../components/ComponentBase'
+import RowItemsComponent from '../../components/RowItemsComponent'
 
 export default class RowManager extends Module {
   public data: any[]
   public definitions: ColumnDefinition[]
-  public component: GridComponent
+  public component: RowItemsComponent
 
   public grid: GridManager | undefined
   public scroll: ScrollManager | undefined
@@ -24,9 +23,7 @@ export default class RowManager extends Module {
 
     this.data = this.core.options.data
     this.definitions = this.core.options.definitions
-    this.component = new ComponentBase({
-      name: 'items'
-    })
+    this.component = new RowItemsComponent()
   }
 
   /*
@@ -35,7 +32,7 @@ export default class RowManager extends Module {
   public init(): void {
     super.init()
 
-    // mount row collection
+    // mount row items component
     this.component.mount(this.core.grid.el)
 
     // manager references
