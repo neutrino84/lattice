@@ -6,6 +6,8 @@
   <style>
     html,
     body {
+      width: 100%;
+      height: 100%;
       margin: 0;
       padding: 0;
     }
@@ -13,8 +15,8 @@
       font-family: Arial, Helvetica, sans-serif;
       font-size: 16px;
       line-height: 20px;
-      width: 1024px;
-      height: 540px;
+      width: 100%;
+      height: 100%;
       background: #f4f4f4;
     }
     #grid .header,
@@ -39,6 +41,9 @@
       white-space: nowrap;
       text-overflow: ellipsis;
     }
+    #grid .row.title .cell {
+      background: #d4d4d4;
+    }
     #grid .column-cell {
       text-transform: uppercase;
     }
@@ -49,7 +54,7 @@
   <script type="module">
     import Grid from './dist/ngrid.esm.js'
 
-    let words = ['hamburger', 'cheese', 'nuts', 'pizza', 'potatoes', 'brocolli', 'meat', 'fruit', 'candy', 'ice cream', 'chicken', 'onions', 'pickles']
+    let words = ['hamburger', 'cheese', 'nuts', 'pizza', 'potatoes', 'brocolli', 'meat', 'fruit', 'candy', 'milk', 'chicken', 'onions', 'pickles']
     let types = ['title', '', '', '', '']
     let random = (num, arr) => {
       let index
@@ -63,7 +68,7 @@
     }
 
     let data = []
-    for (let i=0; i<100; i++) {
+    for (let i=0; i<1000; i++) {
       data.push({
         id: i + '000',
         title: random(2),
@@ -89,10 +94,6 @@
       }, {
         name: 'category',
         field: 'category',
-        width: 180,
-      }, {
-        name: 'type',
-        field: 'type',
         width: 180,
       }, {
         name: 'description',
