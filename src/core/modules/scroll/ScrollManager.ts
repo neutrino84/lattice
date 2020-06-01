@@ -71,9 +71,9 @@ export default class ScrollManager extends Module {
     if (row) {
       row.nodes.forEach((node) => {
         if (viewport.contains(node.bounds)) {
-          node.show()
+          node.uncull()
         } else {
-          node.hide()
+          node.cull()
         }
       })
     }

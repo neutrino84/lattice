@@ -3,6 +3,7 @@ import RowManager from './RowManager'
 import RowComponent from '../../components/RowComponent'
 import CellComponent from '../../components/CellComponent'
 import Rectangle from '../../../geometry/Rectangle'
+import Cache from '../../../utility/Cache'
 import { ColumnDefinition } from '../..'
 
 export type RowOptions = {
@@ -11,7 +12,7 @@ export type RowOptions = {
 }
 
 export default class RowNode extends Node {
-  private static cache = new Map<string, Rectangle>()
+  private static cache = new Cache<Rectangle>()
   private static pool = new Map<string, RowComponent[]>()
 
   public data: any
@@ -66,6 +67,7 @@ export default class RowNode extends Node {
     let data = this.data
     let definitions = this.definitions
     let component = this.component = new RowComponent(this)
+    let id = component.classes.join('-')
 
     // create component and mount
     component.mount(manager.component.el)
@@ -81,7 +83,7 @@ export default class RowNode extends Node {
 
     // create cell components
     definitions.forEach((definition) => {
-      let cached, id
+      let cached
       let value = data[definition.field]
       let left = bounds.width
       let width = definition.width
@@ -98,7 +100,6 @@ export default class RowNode extends Node {
 
       // use cached cell boundaries
       // to improve performance
-      id = component.classes.join('-')
       cached = cache.get(id + '-' + definition.field)
       if (!cached) {
         cached = cell.getBoundingRectangle()
@@ -109,21 +110,24 @@ export default class RowNode extends Node {
       // update node bounds
       bounds.extend(cached)
 
-      // cache node bounds
-      cache.set(id, bounds)
-
       // add cell to collection
       component.cells.push(cell)
     })
+
+    // cache node bounds
+    cache.set(id, bounds)
   }
 
   update(): void {
-    this.definitions.forEach((definition, index) => {
-      this.component && this.component.cells[index].update(this.data[definition.field])
+    let definitions = this.definitions
+    let component = this.component
+    let data = this.data
+    definitions.forEach((definition, index) => {
+      component && component.cells[index].update(data[definition.field])
     })
   }
 
-  show(): void {
+  cull(): void {
     let component
     let bounds = this.bounds
     let pool = RowNode.pool
@@ -148,7 +152,7 @@ export default class RowNode extends Node {
     }
   }
 
-  hide(): void {
+  uncull(): void {
     let pool = RowNode.pool
     if (this.component) {
       let id = this.classes().join('-')
