@@ -42,6 +42,7 @@
       text-overflow: ellipsis;
     }
     #grid .row.title .cell {
+      border-bottom: solid 2px #333333;
       background: #d4d4d4;
     }
     #grid .column-cell {
@@ -55,7 +56,7 @@
     import Grid from './dist/ngrid.esm.js'
 
     let words = ['hamburger', 'cheese', 'nuts', 'pizza', 'potatoes', 'brocolli', 'meat', 'fruit', 'candy', 'milk', 'chicken', 'onions', 'pickles']
-    let types = ['title', '', '', '', '']
+    let types = ['item', 'title', 'item', 'item', 'item', 'item', 'item']
     let random = (num, arr) => {
       let index
       let string = []
