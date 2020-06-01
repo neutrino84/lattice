@@ -10,11 +10,12 @@ export default class ScrollManager extends Module {
   private static LOOK_AHEAD_BUFFER_SIZE = 512
   private static DEBOUNCE_TIMEOUT_MS = 50
 
-  debounce: NodeJS.Timeout | undefined
-  grid: GridManager | undefined
-  row: RowManager | undefined
-  bounds: Rectangle = new Rectangle()
-  viewport: Rectangle = new Rectangle()
+  public bounds: Rectangle = new Rectangle()
+  public viewport: Rectangle = new Rectangle()
+
+  private debounce: NodeJS.Timeout | undefined
+  private grid: GridManager | undefined
+  private row: RowManager | undefined
 
   constructor(core: Core) {
     super(core)
@@ -76,21 +77,22 @@ export default class ScrollManager extends Module {
         }
       })
     }
-
-    // reset debounce
-    this.debounce = undefined
   }
 
   /*
    *
    */
   public onscroll(): void {
-    // move visible boundary
+    // update boundary
     this.viewport.y = this.bounds.y + this.core.grid.el.scrollTop - ScrollManager.LOOK_AHEAD_BUFFER_SIZE
   
-    // update node visibiliy
+    // update scroll
     if (!this.debounce) {
-      this.debounce = setTimeout(this.scroll.bind(this), ScrollManager.DEBOUNCE_TIMEOUT_MS)
+      this.scroll()
+      this.debounce = setTimeout(() => {
+        this.scroll()
+        this.debounce = undefined
+      }, ScrollManager.DEBOUNCE_TIMEOUT_MS)
     }
   }
 
