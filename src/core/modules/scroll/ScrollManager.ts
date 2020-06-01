@@ -101,5 +101,8 @@ export default class ScrollManager extends Module {
    */
   public destroy(): void {
     super.destroy()
+
+    delete this.grid
+    delete this.row
   }
 }
