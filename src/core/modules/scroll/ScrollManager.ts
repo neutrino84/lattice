@@ -7,7 +7,7 @@ import RowManager from '../row/RowManager'
 
 export default class ScrollManager extends Module {
   private static LOOK_AHEAD_FACTOR = 2
-  private static LOOK_AHEAD_BUFFER_SIZE = 512
+  private static LOOK_AHEAD_BUFFER_SIZE = 256
   private static DEBOUNCE_TIMEOUT_MS = 50
 
   public bounds: Rectangle = new Rectangle()
@@ -70,10 +70,9 @@ export default class ScrollManager extends Module {
 
     if (row) {
       row.nodes.forEach((node) => {
+        node.cull()
         if (viewport.contains(node.bounds)) {
           node.uncull()
-        } else {
-          node.cull()
         }
       })
     }

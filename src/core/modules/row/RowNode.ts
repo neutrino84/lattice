@@ -1,5 +1,6 @@
 import Node from '../Node'
 import RowManager from './RowManager'
+import Pool from '../../../utility/Pool'
 import RowComponent from '../../components/RowComponent'
 import CellComponent from '../../components/CellComponent'
 import Rectangle from '../../../geometry/Rectangle'
@@ -13,7 +14,7 @@ export type RowOptions = {
 
 export default class RowNode extends Node {
   private static cache = new Cache<Rectangle>()
-  private static pool = new Map<string, RowComponent[]>()
+  private static pool = new Pool<RowComponent>()
 
   public data: any
   public manager: RowManager
@@ -53,14 +54,14 @@ export default class RowNode extends Node {
       bounds.width = cached.width
       bounds.height = cached.height
     } else {
-      this.mount()
+      this.mount(manager.bounds)
     }
   }
 
   /*
    * 
    */
-  mount(): void {
+  mount(alignment: Rectangle): void {
     let cache = RowNode.cache
     let manager = this.manager
     let bounds = this.bounds
@@ -73,13 +74,14 @@ export default class RowNode extends Node {
     component.mount(manager.component.el)
     component.attributes({
       style: {
-        transform: 'translate(0, ' + manager.bounds.height + 'px)',
+        transform: 'translate(0, ' + alignment.height + 'px)',
       }
     })
 
-    // set node boundaries
-    bounds.x = manager.bounds.x
-    bounds.y = manager.bounds.y + manager.bounds.height
+    // align bounds
+    bounds.width = 0
+    bounds.x = alignment.x
+    bounds.y = alignment.y + alignment.height
 
     // create cell components
     definitions.forEach((definition) => {
@@ -127,47 +129,50 @@ export default class RowNode extends Node {
     })
   }
 
+  show(): void {
+    //..
+  }
+
+  hide(): void {
+    //..
+  }
+
   cull(): void {
-    let component
-    let bounds = this.bounds
+    let id
+    let component = this.component
     let pool = RowNode.pool
-    if (!this.component) {
-      let id = this.classes().join('-')
-      let collection = pool.get(id)
-      if (collection) {
-        component = collection.pop()
-        if (component) {
-          this.component = component
-          this.component.attributes({
-            style: {
-              visibility: 'visible',
-              transform: 'translate(0, ' + (bounds.y - bounds.height) + 'px)',
-            }
-          })
-          this.update()
-        } else {
-          // mount new component
+    if (component != null) {
+      id = this.classes().join('-')
+      pool.checkin(id, component)
+      component.attributes({
+        style: {
+          transform: 'translate(0, -100px)',
         }
-      }
+      })
+      this.component = null
     }
   }
 
   uncull(): void {
-    let pool = RowNode.pool
-    if (this.component) {
-      let id = this.classes().join('-')
-      let collection = pool.get(id)
-      if (!collection) {
-        pool.set(id, [this.component])
+    let id, component
+    let bounds = this.bounds
+    if (this.component == null) {
+      id = this.classes().join('-')
+      component = RowNode.pool.checkout(id)
+      if (component) {
+        this.component = component
+        this.component.attributes({
+          style: {
+            transform: 'translate(0, ' + (bounds.y - bounds.height) + 'px)',
+          }
+        })
+        this.update()
       } else {
-        collection.push(this.component)
+        let cloned = bounds.clone()
+            cloned.y = 0
+            cloned.height = bounds.y - bounds.height
+        this.mount(cloned)
       }
-      this.component.attributes({
-        style: {
-          visibility: 'hidden'
-        }
-      })
-      this.component = null
     }
   }
 

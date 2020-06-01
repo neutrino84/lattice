@@ -65,12 +65,12 @@ export default class RowManager extends Module {
         // mount or init
         if (scroll) {
           if (scroll.bounds.contains(bounds)) {
-            node.mount()
+            node.mount(bounds)
           } else {
             node.init()
           }
         } else {
-          node.mount()
+          node.mount(bounds)
         }
 
         // add node
