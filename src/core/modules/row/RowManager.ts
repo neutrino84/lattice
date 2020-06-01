@@ -80,7 +80,7 @@ export default class RowManager extends Module {
         bounds.extend(node.bounds)
       })
 
-      //
+      // set scrollable region
       component.attributes({
         style: {
           height: bounds.height + 'px'
@@ -95,9 +95,7 @@ export default class RowManager extends Module {
    *
    */
   public update(): void {
-    this.nodes.forEach((node) => {
-      //.. redraw
-    })
+    this.nodes.forEach(node => node.update)
   }
 
   /*
