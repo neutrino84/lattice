@@ -16,6 +16,7 @@ export default class RowNode extends Node {
   private static cache = new Cache<Rectangle>()
   private static pool = new Pool<RowComponent>()
 
+  public id: string
   public data: any
   public manager: RowManager
   public component: RowComponent | null
@@ -32,6 +33,7 @@ export default class RowNode extends Node {
     this.data = options.data
     this.definitions = options.manager.definitions
     this.component = null
+    this.id = this.classes().join('-')
   }
 
   /*
@@ -40,7 +42,7 @@ export default class RowNode extends Node {
   init(): void {
     let cached
     let cache = RowNode.cache
-    let id = this.classes().join('-')
+    let id = this.id
     let manager = this.manager
     let bounds = this.bounds
 
@@ -68,7 +70,7 @@ export default class RowNode extends Node {
     let data = this.data
     let definitions = this.definitions
     let component = this.component = new RowComponent(this)
-    let id = component.classes.join('-')
+    let id = this.id
 
     // create component and mount
     component.mount(manager.component.el)
@@ -86,9 +88,9 @@ export default class RowNode extends Node {
     // create cell components
     definitions.forEach((definition) => {
       let cached
-      let value = data[definition.field]
       let left = bounds.width
       let width = definition.width
+      let value = data[definition.field]
       let cell = new CellComponent(value)
 
       // mount and style
@@ -138,11 +140,10 @@ export default class RowNode extends Node {
   }
 
   cull(): void {
-    let id
+    let id = this.id
     let component = this.component
     let pool = RowNode.pool
     if (component != null) {
-      id = this.classes().join('-')
       pool.checkin(id, component)
       component.attributes({
         style: {
@@ -154,10 +155,10 @@ export default class RowNode extends Node {
   }
 
   uncull(): void {
-    let id, component
+    let component
+    let id = this.id
     let bounds = this.bounds
     if (this.component == null) {
-      id = this.classes().join('-')
       component = RowNode.pool.checkout(id)
       if (component) {
         this.component = component
@@ -170,7 +171,7 @@ export default class RowNode extends Node {
       } else {
         let cloned = bounds.clone()
             cloned.y = 0
-            cloned.height = bounds.y - bounds.height
+            cloned.height = bounds.y
         this.mount(cloned)
       }
     }
