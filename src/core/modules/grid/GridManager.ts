@@ -3,14 +3,17 @@ import Module from '../Module'
 import Rectangle from '../../../geometry/Rectangle'
 import ColumnManager from '../column/ColumnManager'
 
-export type GridBoundaries = {
-  root?: Rectangle
-  grid?: Rectangle
+type GridBoundaries = {
+  root: Rectangle
+  grid: Rectangle
 }
 
 export default class GridManager extends Module {
   column: ColumnManager | undefined
-  boundaries: GridBoundaries = {}
+  boundaries: GridBoundaries = {
+    root: new Rectangle(),
+    grid: new Rectangle(),
+  }
 
   /*
    *
@@ -42,27 +45,24 @@ export default class GridManager extends Module {
    *
    */
   public resize(): void {
-    let height
-    let core = this.core
-    let column = this.column
-    let boundaries = this.boundaries
-    let root = boundaries.root = new Rectangle(core.root.getBoundingClientRect())
+    // get root bounding box
+    this.boundaries.root = new Rectangle(this.core.root.getBoundingClientRect())
 
-    if (column) {
-      height = root.height - column.bounds.height
-      core.grid.attributes({
+    // get grid bounding box
+    if (this.column) {
+      this.core.grid.attributes({
         style: {
-          height: height + 'px'
+          height: (this.boundaries.root.height - this.column.bounds.height) + 'px'
         }
       })
-      boundaries.grid = core.grid.getBoundingRectangle()
+      this.boundaries.grid = this.core.grid.getBoundingRectangle()
     } else {
-      core.grid.attributes({
+      this.core.grid.attributes({
         style: {
-          height: root.height + 'px'
+          height: this.boundaries.root.height + 'px'
         }
       })
-      boundaries.grid = root
+      this.boundaries.grid = this.boundaries.root
     }
   }
 

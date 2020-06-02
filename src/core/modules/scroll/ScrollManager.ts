@@ -45,14 +45,13 @@ export default class ScrollManager extends Module {
    *
    */
   public resize(): void {
-    let grid = this.grid
-    if (grid && grid.boundaries.grid) {
+    if (this.grid) {
       // create bounds
-      this.bounds = grid.boundaries.grid.clone()
+      this.bounds = this.grid.boundaries.grid.clone()
       this.bounds.height *= ScrollManager.LOOK_AHEAD_FACTOR
 
       // create viewport
-      this.viewport = grid.boundaries.grid.clone()
+      this.viewport = this.grid.boundaries.grid.clone()
       this.viewport.height += ScrollManager.LOOK_AHEAD_BUFFER_SIZE * 2
       this.viewport.y = this.bounds.y + this.core.grid.el.scrollTop - ScrollManager.LOOK_AHEAD_BUFFER_SIZE
     }

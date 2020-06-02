@@ -51,7 +51,7 @@ export default class RowManager extends Module {
     let grid = this.grid
     let scroll = this.scroll
     let component = this.component
-    if (grid && grid.boundaries.grid) {
+    if (grid != undefined) {
       // initialize row manager boundary
       bounds = this.bounds = grid.boundaries.grid.cloneZeroed()
       bounds.width = grid.boundaries.grid.width
