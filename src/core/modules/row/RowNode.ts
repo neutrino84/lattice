@@ -86,7 +86,7 @@ export default class RowNode extends Node {
     bounds.y = alignment.y + alignment.height
 
     // create cell components
-    definitions.forEach((definition) => {
+    definitions.forEach((definition, index) => {
       let cached
       let left = bounds.width
       let width = definition.width
@@ -110,6 +110,15 @@ export default class RowNode extends Node {
         cache.set(id + '-' + definition.field, cached)
       }
       cached.y = bounds.y
+
+      //
+      if (index === definitions.length-1) {
+        cell.attributes({
+          style: {
+            width: (manager.bounds.width - cached.width) + 'px',
+          }
+        })
+      }
 
       // update node bounds
       bounds.extend(cached)

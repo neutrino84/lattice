@@ -54,6 +54,7 @@ export default class RowManager extends Module {
     if (grid && grid.boundaries.grid) {
       // initialize row manager boundary
       bounds = this.bounds = grid.boundaries.grid.cloneZeroed()
+      bounds.width = grid.boundaries.grid.width
 
       // create nodes from data
       data.forEach((item: any) => {
