@@ -21,8 +21,7 @@
     #grid .header,
     #grid .grid,
     #grid .footer,
-    #grid .column-row,
-    #grid .row {
+    #grid .column-row {
       position: relative;
     }
     #grid .header {
@@ -32,6 +31,14 @@
     #grid .grid {
       overflow: auto;
     }
+    #grid .row {
+      position: absolute;
+      width: 100%;
+      background: #f8f8f8;
+    }
+    #grid .row.title {
+      background: #e8e8e8;
+    }
     #grid .column-cell,
     #grid .cell {
       position: absolute;
@@ -39,13 +46,6 @@
       padding: 10px 20px 10px 5px;
       white-space: nowrap;
       text-overflow: ellipsis;
-    }
-    #grid .row .cell {
-      background: #f8f8f8;
-    }
-    #grid .row.title .cell {
-      border-bottom: solid 2px #cccccc;
-      background: #e8e8e8;
     }
     #grid .column-cell {
       text-transform: uppercase;
