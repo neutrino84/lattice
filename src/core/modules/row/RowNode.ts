@@ -1,10 +1,10 @@
 import Node from '../Node'
 import RowManager from './RowManager'
-import Pool from '../../../utility/Pool'
 import RowComponent from '../../components/RowComponent'
 import CellComponent from '../../components/CellComponent'
 import Rectangle from '../../../geometry/Rectangle'
 import Cache from '../../../utility/Cache'
+import Pool from '../../../utility/Pool'
 import { ColumnDefinition } from '../..'
 
 export type RowOptions = {
@@ -111,15 +111,6 @@ export default class RowNode extends Node {
       }
       cached.y = bounds.y
 
-      //
-      if (index === definitions.length-1) {
-        cell.attributes({
-          style: {
-            width: (manager.bounds.width - cached.width) + 'px',
-          }
-        })
-      }
-
       // update node bounds
       bounds.extend(cached)
 
@@ -135,6 +126,8 @@ export default class RowNode extends Node {
     let definitions = this.definitions
     let component = this.component
     let data = this.data
+
+    // update cells by definition
     definitions.forEach((definition, index) => {
       component && component.cells[index].update(data[definition.field])
     })
