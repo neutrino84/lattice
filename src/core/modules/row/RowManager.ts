@@ -3,6 +3,7 @@ import Core, { ColumnDefinition } from '../..'
 import Module from '../Module'
 import RowNode from '../../modules/row/RowNode'
 import Rectangle from '../../../geometry/Rectangle'
+import ColumnManager from '../column/ColumnManager'
 import GridManager from '../grid/GridManager'
 import ScrollManager from '../scroll/ScrollManager'
 import RowItemsComponent from '../../components/RowItemsComponent'
@@ -13,6 +14,7 @@ export default class RowManager extends Module {
   public component: RowItemsComponent
 
   public grid: GridManager | undefined
+  public column: ColumnManager | undefined
   public scroll: ScrollManager | undefined
 
   public nodes: RowNode[] = []
@@ -37,6 +39,7 @@ export default class RowManager extends Module {
 
     // manager references
     this.grid = this.core.registry.get<GridManager>('GridManager')
+    this.column = this.core.registry.get<ColumnManager>('ColumnManager')
     this.scroll = this.core.registry.get<ScrollManager>('ScrollManager')
   }
 
