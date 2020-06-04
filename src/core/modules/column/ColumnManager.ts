@@ -4,13 +4,16 @@ import Module from '../Module'
 import ColumnNode from './ColumnNode'
 import ColumnRowComponent from '../../components/ColumnRowComponent'
 import HeaderComponent from '../../components/HeaderComponent'
+import CellComponent from '../../components/CellComponent'
 import Rectangle from '../../../geometry/Rectangle'
 
 export default class ColumnManager extends Module {
   public options: GridOptions
   public component: HeaderComponent
-  public nodes: ColumnNode[] = []
-  public bounds: Rectangle = new Rectangle()
+
+  public nodes = new Array<ColumnNode>()
+  public bounds = new Rectangle()
+  public cells = new Map<string, CellComponent[]>()
 
   constructor(core: Core) {
     super(core)
@@ -28,13 +31,22 @@ export default class ColumnManager extends Module {
   }
 
   public mount(): void {
-    this.component.mount(this.core.header.el)
+    let node
+    let nodes = this.nodes
+    let bounds = this.bounds
+    let cells = this.cells
+    let component = this.component
+    let options = this.options
+
+    component.mount(this.core.header.el)
 
     // initialize row nodes
-    this.options.definitions.forEach(definition => {
-      let nodes = this.nodes
-      let bounds = this.bounds
-      let node = new ColumnNode(this, definition)
+    options.definitions.forEach(definition => {
+      // create new node instance
+      node = new ColumnNode(this, definition)
+
+      // init cell collection
+      cells.set(definition.field, new Array<CellComponent>())
 
       // add node to collection
       nodes.push(node)
@@ -44,11 +56,27 @@ export default class ColumnManager extends Module {
     })
 
     //
-    this.component.attributes({
+    component.attributes({
       style: {
         height: this.bounds.height + 'px'
       }
     })
+  }
+
+  public add(key: string, cell: CellComponent): void {
+    let collection = this.cells.get(key)
+    if (collection) {
+      collection.push(cell)
+    }
+  }
+
+  public remove(key: string, cell: CellComponent): void {
+    let index
+    let collection = this.cells.get(key)
+    if (collection) {
+      index = collection.indexOf(cell)
+      collection.splice(index, 1)
+    }
   }
 
   public destroy(): void {

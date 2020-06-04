@@ -116,6 +116,11 @@ export default class RowNode extends Node {
 
       // add cell to collection
       component.cells.push(cell)
+
+      // register cell to column manager
+      if (manager.column) {
+        manager.column.add(definition.field, cell)
+      }
     })
 
     // cache node bounds
