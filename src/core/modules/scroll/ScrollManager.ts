@@ -61,16 +61,12 @@ export default class ScrollManager extends Module {
    *
    */
   public scroll(): void {
-    let row = this.row
-    let viewport = this.viewport
-  
-    // move visible boundary
-    this.viewport.y = this.bounds.y + this.core.grid.el.scrollTop - ScrollManager.LOOK_AHEAD_BUFFER_SIZE
-
-    if (row) {
-      row.nodes.forEach((node) => {
+    this.viewport.y = this.bounds.y + this.core.grid.el.scrollTop -ScrollManager.LOOK_AHEAD_BUFFER_SIZE
+    
+    if (this.row) {
+      this.row.nodes.forEach((node) => {
         node.cull()
-        if (viewport.contains(node.bounds)) {
+        if (this.viewport.contains(node.bounds)) {
           node.uncull()
         }
       })
