@@ -45,24 +45,31 @@ export default class GridManager extends Module {
    *
    */
   public resize(): void {
-    // get root bounding box
-    this.boundaries.root = new Rectangle(this.core.root.getBoundingClientRect())
+    let column
+    let core = this.core
+    let boundaries = this.boundaries
 
-    // get grid bounding box
+    boundaries.root = new Rectangle(core.root.getBoundingClientRect())
+
     if (this.column) {
-      this.core.grid.attributes({
+      column = this.column
+      core.grid.attributes({
         style: {
-          height: (this.boundaries.root.height - this.column.bounds.height) + 'px'
+          height: (boundaries.root.height - column.bounds.height) + 'px'
         }
       })
-      this.boundaries.grid = this.core.grid.getBoundingRectangle()
+      boundaries.grid = core.grid.getBoundingRectangle()
+      
+      if (column.bounds.width > boundaries.grid.width) {
+        boundaries.grid.width = column.bounds.width
+      }
     } else {
-      this.core.grid.attributes({
+      core.grid.attributes({
         style: {
-          height: this.boundaries.root.height + 'px'
+          height: boundaries.root.height + 'px'
         }
       })
-      this.boundaries.grid = this.boundaries.root
+      boundaries.grid = boundaries.root
     }
   }
 
