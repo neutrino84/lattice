@@ -74,11 +74,6 @@ export default class RowNode extends Node {
 
     // create component and mount
     component.mount(manager.component.el)
-    component.attributes({
-      style: {
-        transform: 'translate(0, ' + alignment.height + 'px)',
-      }
-    })
 
     // align bounds
     bounds.width = 0
@@ -120,6 +115,13 @@ export default class RowNode extends Node {
       // register cell to column manager
       if (manager.column) {
         manager.column.add(definition.field, cell)
+      }
+    })
+
+    component.attributes({
+      style: {
+        height: bounds.height + 'px',
+        transform: 'translate(0, ' + alignment.height + 'px)',
       }
     })
 
