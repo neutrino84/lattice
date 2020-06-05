@@ -42,13 +42,28 @@
     #grid .column-cell,
     #grid .cell {
       position: absolute;
+      padding: 10px;
       overflow: hidden;
-      padding: 10px 20px 10px 5px;
-      white-space: nowrap;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
     #grid .column-cell {
+      border-left: solid 1px #c8c8c8;
       text-transform: uppercase;
+    }
+    #grid .cell {
+      border-left: solid 1px #c8c8c8;
+    }
+    #grid .column-cell .column-dragger {
+      position: absolute;
+      top: 25%;
+      right: -3px;
+      width: 6px;
+      height: 50%;
+      cursor: ew-resize;
+      background: #f8f8f8;
+      border: solid 1px #c8c8c8;
+      border-left: solid 1px #c8c8c8;
     }
   </style>
 </head>
@@ -74,8 +89,8 @@
     for (let i=0; i<10000; i++) {
       data.push({
         id: i + '000',
-        title: random(2),
-        description: random(6),
+        title: random(3),
+        description: random(8),
         category: random(1),
         type: random(1, types),
       })
@@ -90,22 +105,18 @@
         name: 'code',
         field: 'id',
         width: 80,
-      },{
-        name: 'type',
-        field: 'type',
-        width: 180,
       }, {
         name: 'title',
         field: 'title',
-        width: 180,
+        width: 240,
       }, {
         name: 'category',
         field: 'category',
-        width: 180,
+        width: 140,
       }, {
         name: 'description',
         field: 'description',
-        width: 360,
+        width: 440,
       }],
     })
   </script>
