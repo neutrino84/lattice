@@ -13,7 +13,7 @@ export default class ColumnManager extends Module {
 
   public bounds = new Rectangle()
   public nodes = new Array<ColumnNode>()
-  public cells = new Map<string, CellComponent[]>()
+  public columns = new Map<string, CellComponent[]>()
 
   constructor(core: Core) {
     super(core)
@@ -25,20 +25,24 @@ export default class ColumnManager extends Module {
   public init(): void {
     super.init()
 
+    // mount column row component
+    this.component.mount(this.core.header.el)
+
     // update local bounds w/ component bounds
     // zeroed (to align column components)
     this.bounds = this.component.getZeroedBoundingRectangle()
   }
 
+  /*
+   *
+   */
   public mount(): void {
     let node
     let nodes = this.nodes
     let bounds = this.bounds
-    let cells = this.cells
+    let columns = this.columns
     let component = this.component
     let options = this.options
-
-    component.mount(this.core.header.el)
 
     // initialize row nodes
     options.definitions.forEach(definition => {
@@ -46,7 +50,7 @@ export default class ColumnManager extends Module {
       node = new ColumnNode(this, definition)
 
       // init cell collection
-      cells.set(definition.field, new Array<CellComponent>())
+      columns.set(definition.field, new Array<CellComponent>())
 
       // add node to collection
       nodes.push(node)
@@ -63,22 +67,31 @@ export default class ColumnManager extends Module {
     })
   }
 
+  /*
+   *
+   */
   public add(key: string, cell: CellComponent): void {
-    let collection = this.cells.get(key)
+    let collection = this.columns.get(key)
     if (collection) {
       collection.push(cell)
     }
   }
 
+  /*
+   *
+   */
   public remove(key: string, cell: CellComponent): void {
     let index
-    let collection = this.cells.get(key)
+    let collection = this.columns.get(key)
     if (collection) {
       index = collection.indexOf(cell)
       collection.splice(index, 1)
     }
   }
 
+  /*
+   *
+   */
   public destroy(): void {
     super.destroy()
 
