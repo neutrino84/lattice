@@ -16,8 +16,8 @@ export default class RowNode extends Node {
   private static cache = new Cache<Rectangle>()
   private static pool = new Pool<RowComponent>()
 
-  public id: string
   public data: any
+  public type: string
   public manager: RowManager
   public component: RowComponent | null
   public definitions: ColumnDefinition[]
@@ -29,11 +29,11 @@ export default class RowNode extends Node {
   constructor(options: RowOptions) {
     super()
 
+    this.component = null
     this.manager = options.manager
     this.data = options.data
     this.definitions = options.manager.definitions
-    this.component = null
-    this.id = this.classes().join('-')
+    this.type = this.classes().join('-')
   }
 
   /*
@@ -42,7 +42,7 @@ export default class RowNode extends Node {
   init(): void {
     let cached
     let cache = RowNode.cache
-    let id = this.id
+    let type = this.type
     let manager = this.manager
     let bounds = this.bounds
 
@@ -51,7 +51,7 @@ export default class RowNode extends Node {
     bounds.y = manager.bounds.y + manager.bounds.height
 
     // get cached bounds
-    cached = cache.get(id)
+    cached = cache.get(type)
     if (cached) {
       bounds.width = cached.width
       bounds.height = cached.height
@@ -70,7 +70,7 @@ export default class RowNode extends Node {
     let data = this.data
     let definitions = this.definitions
     let component = this.component = new RowComponent(this)
-    let id = this.id
+    let type = this.type
 
     // create component and mount
     component.mount(manager.component.el)
@@ -99,10 +99,10 @@ export default class RowNode extends Node {
 
       // use cached cell boundaries
       // to improve performance
-      cached = cache.get(id + '-' + definition.field)
+      cached = cache.get(type + '-' + definition.field)
       if (!cached) {
         cached = cell.getBoundingRectangle()
-        cache.set(id + '-' + definition.field, cached)
+        cache.set(type + '-' + definition.field, cached)
       }
       cached.y = bounds.y
 
@@ -112,7 +112,8 @@ export default class RowNode extends Node {
       // add cell to collection
       component.cells.push(cell)
 
-      // register cell to column manager
+      // register to
+      // column manager
       if (manager.column) {
         manager.column.add(definition.field, cell)
       }
@@ -126,7 +127,7 @@ export default class RowNode extends Node {
     })
 
     // cache node bounds
-    cache.set(id, bounds)
+    cache.set(type, bounds)
   }
 
   update(): void {
@@ -149,11 +150,11 @@ export default class RowNode extends Node {
   }
 
   cull(): void {
-    let id = this.id
+    let type = this.type
     let component = this.component
     let pool = RowNode.pool
     if (component != null) {
-      pool.checkin(id, component)
+      pool.checkin(type, component)
       component.attributes({
         style: {
           transform: 'translate(0, -100px)',
@@ -165,10 +166,10 @@ export default class RowNode extends Node {
 
   uncull(): void {
     let component
-    let id = this.id
+    let type = this.type
     let bounds = this.bounds
     if (this.component == null) {
-      component = RowNode.pool.checkout(id)
+      component = RowNode.pool.checkout(type)
       if (component) {
         this.component = component
         this.component.attributes({
