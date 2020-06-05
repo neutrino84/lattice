@@ -16,7 +16,8 @@ export default class ColumnNode {
     this.width = definition.width
 
     // create column row component and mount
-    this.component = new ColumnCellComponent(definition.name)
+    this.component = new ColumnCellComponent(this)
+    this.component.update(definition.name)
     this.component.mount(manager.component.el)
     this.component.attributes({
       style: {

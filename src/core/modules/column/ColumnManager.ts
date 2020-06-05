@@ -11,8 +11,8 @@ export default class ColumnManager extends Module {
   public options: GridOptions
   public component: HeaderComponent
 
-  public nodes = new Array<ColumnNode>()
   public bounds = new Rectangle()
+  public nodes = new Array<ColumnNode>()
   public cells = new Map<string, CellComponent[]>()
 
   constructor(core: Core) {
