@@ -112,8 +112,7 @@ export default class RowNode extends Node {
       // add cell to collection
       component.cells.push(cell)
 
-      // register to
-      // column manager
+      // register cell to column
       if (manager.column) {
         manager.column.add(definition.field, cell)
       }
@@ -168,13 +167,14 @@ export default class RowNode extends Node {
     let component
     let type = this.type
     let bounds = this.bounds
+    let manager = this.manager
     if (this.component == null) {
       component = RowNode.pool.checkout(type)
       if (component) {
         this.component = component
         this.component.attributes({
           style: {
-            transform: 'translate(0, ' + (bounds.y - bounds.height) + 'px)',
+            transform: 'translate(0, ' + (bounds.y - bounds.height - manager.bounds.y) + 'px)',
           }
         })
         this.update()
