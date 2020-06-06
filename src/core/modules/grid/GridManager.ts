@@ -77,9 +77,7 @@ export default class GridManager extends Module {
    *
    */
   public onscroll(): void {
-    if (this.column) {
-      this.core.header.el.scrollLeft = this.core.grid.el.scrollLeft
-    }
+    this.core.header.el.scrollLeft = this.core.grid.el.scrollLeft
   }
 
   /*
