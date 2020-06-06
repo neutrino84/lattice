@@ -75,8 +75,6 @@ export default class ComponentBase {
     let parent = this.el.parentElement
     if (parent) {
       unmount(parent, this.el)
-    } else {
-      throw new Error('You can not unmount an element with no parent')
     }
   }
 
