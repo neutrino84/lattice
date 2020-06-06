@@ -61,8 +61,10 @@ export default class ScrollManager extends Module {
    *
    */
   public scroll(): void {
-    this.viewport.y = this.bounds.y + this.core.grid.el.scrollTop -ScrollManager.LOOK_AHEAD_BUFFER_SIZE
+    // move viewport to scrolled position
+    this.viewport.y = this.bounds.y + this.core.grid.el.scrollTop - ScrollManager.LOOK_AHEAD_BUFFER_SIZE
     
+    // update row node culling
     if (this.row) {
       this.row.nodes.forEach((node) => {
         node.cull()
@@ -77,9 +79,6 @@ export default class ScrollManager extends Module {
    *
    */
   public onscroll(): void {
-    // update boundary
-    this.viewport.y = this.bounds.y + this.core.grid.el.scrollTop - ScrollManager.LOOK_AHEAD_BUFFER_SIZE
-  
     // update scroll
     if (!this.debounce) {
       this.scroll()
