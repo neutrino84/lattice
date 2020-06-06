@@ -3,15 +3,12 @@ import Core, { GridOptions } from '../..'
 import Module from '../Module'
 import ColumnNode from './ColumnNode'
 import ColumnRowComponent from '../../components/ColumnRowComponent'
-import HeaderComponent from '../../components/HeaderComponent'
 import CellComponent from '../../components/CellComponent'
-import Rectangle from '../../../geometry/Rectangle'
 
 export default class ColumnManager extends Module {
   public options: GridOptions
-  public component: HeaderComponent
+  public component: ColumnRowComponent
 
-  public bounds = new Rectangle()
   public nodes = new Array<ColumnNode>()
   public columns = new Map<string, CellComponent[]>()
 
@@ -30,7 +27,7 @@ export default class ColumnManager extends Module {
 
     // update local bounds w/ component bounds
     // zeroed (to align column components)
-    this.bounds = this.component.getZeroedBoundingRectangle()
+    this.component.bounds = this.component.getZeroedBoundingRectangle()
   }
 
   /*
@@ -39,7 +36,6 @@ export default class ColumnManager extends Module {
   public mount(): void {
     let node
     let nodes = this.nodes
-    let bounds = this.bounds
     let columns = this.columns
     let component = this.component
     let options = this.options
@@ -56,13 +52,13 @@ export default class ColumnManager extends Module {
       nodes.push(node)
 
       // extend local bounds
-      bounds.extend(node.component.getBoundingRectangle())
+      component.bounds.extend(node.component.getBoundingRectangle())
     })
 
     //
     component.attributes({
       style: {
-        height: this.bounds.height + 'px'
+        height: component.bounds.height + 'px'
       }
     })
   }
@@ -95,9 +91,10 @@ export default class ColumnManager extends Module {
   public destroy(): void {
     super.destroy()
 
+    this.component.destroy()
+
     delete this.options
-    delete this.component
     delete this.nodes
-    delete this.bounds
+    delete this.component
   }
 }

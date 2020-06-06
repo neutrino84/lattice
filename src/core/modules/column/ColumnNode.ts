@@ -12,8 +12,8 @@ export default class ColumnNode {
   constructor(manager: ColumnManager, definition: ColumnDefinition) {
     this.manager = manager
     this.definition = definition
-    this.index = manager.options.definitions.indexOf(definition)
     this.width = definition.width
+    this.index = manager.options.definitions.indexOf(definition)
 
     // create column row component and mount
     this.component = new ColumnCellComponent(this)
@@ -21,7 +21,7 @@ export default class ColumnNode {
     this.component.mount(manager.component.el)
     this.component.attributes({
       style: {
-        left: this.manager.bounds.width + 'px',
+        left: this.manager.component.bounds.width + 'px',
         width: this.width + 'px',
       }
     })

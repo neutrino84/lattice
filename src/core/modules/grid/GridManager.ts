@@ -55,13 +55,13 @@ export default class GridManager extends Module {
       column = this.column
       core.grid.attributes({
         style: {
-          height: (boundaries.root.height - column.bounds.height) + 'px'
+          height: (boundaries.root.height - column.component.bounds.height) + 'px'
         }
       })
       boundaries.grid = core.grid.getBoundingRectangle()
       
-      if (column.bounds.width > boundaries.grid.width) {
-        boundaries.grid.width = column.bounds.width
+      if (column.component.bounds.width > boundaries.grid.width) {
+        boundaries.grid.width = column.component.bounds.width
       }
     } else {
       core.grid.attributes({
