@@ -168,7 +168,7 @@ export default class RowNode extends Node {
     let component = this.component
     let pool = RowNode.pool
     if (component != null) {
-      pool.checkin(type, component)
+      pool.release(type, component)
       component.attributes({
         style: {
           transform: 'translate(0, -100px)',
@@ -186,7 +186,7 @@ export default class RowNode extends Node {
     let manager = this.manager
     if (this.component == null) {
       translate = bounds.y - bounds.height - manager.bounds.y
-      component = RowNode.pool.checkout(type)
+      component = RowNode.pool.acquire(type)
       if (component) {
         this.component = component
         this.component.attributes({

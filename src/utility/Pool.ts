@@ -2,7 +2,7 @@
 export default class Pool<T> {
   private pool = new Map<string, T[]>()
 
-  public checkin(key: string, component: T): void {
+  public release(key: string, component: T): void {
     let pool = this.pool
     let collection = pool.get(key)
     if (collection == undefined) {
@@ -12,7 +12,7 @@ export default class Pool<T> {
     }
   }
 
-  public checkout(key: string): T | undefined {
+  public acquire(key: string): T | undefined {
     let pool = this.pool
     let collection = pool.get(key)
     return collection && collection.pop()
