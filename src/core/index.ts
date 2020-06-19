@@ -1,5 +1,3 @@
-
-import EventEmitter from 'eventemitter3'
 import Logger from './Logger'
 import ModuleRegistry from './ModuleRegistry'
 
@@ -22,15 +20,13 @@ export interface GridOptions {
   debug?: boolean
 }
 
-export default class Core extends EventEmitter {
+export default class Core {
   public root: HTMLElement
   public logger: Logger
   public options: GridOptions
   public registry: ModuleRegistry
 
   constructor(options: GridOptions) {
-    super()
-
     this.options = options
     if (typeof options.element === 'string') {
       let element = document.getElementById(options.element)
