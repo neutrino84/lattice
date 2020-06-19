@@ -21,8 +21,8 @@ export default class ColumnCellComponent extends ComponentBase {
     // create dragger component
     this.dragger = new ComponentBase({ name: 'column-dragger' })
     this.dragger.mount(this.el)
-    this.dragger.el.addEventListener('mousedown', this.node.onDragMouseDown.bind(this.node), { capture: true })
-    this.dragger.el.addEventListener('mouseup', this.node.onDragMouseUp.bind(this.node), { capture: true })
+    // this.dragger.el.addEventListener('mousedown', this.node.onDragMouseDown.bind(this.node), { capture: true })
+    // this.dragger.el.addEventListener('mouseup', this.node.onDragMouseUp.bind(this.node), { capture: true })
   }
 
   update(content: string): void {
