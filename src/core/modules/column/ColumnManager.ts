@@ -70,7 +70,8 @@ export default class ColumnManager extends Module {
     // set column row component height
     component.attributes({
       style: {
-        height: component.bounds.height + 'px'
+        height: component.bounds.height + 'px',
+        width: component.bounds.width + 'px',
       }
     })
 

@@ -121,6 +121,7 @@ export default class RowNode extends Node {
     component.attributes({
       style: {
         height: bounds.height + 'px',
+        width: bounds.width + 'px',
         transform: 'translate(0, ' + alignment.height + 'px)',
       }
     })
