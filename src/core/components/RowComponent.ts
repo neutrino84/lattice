@@ -3,8 +3,8 @@ import RowNode from '../modules/row/RowNode'
 import CellComponent from './CellComponent'
 
 export default class RowComponent extends ComponentBase {
-  node: RowNode
-  cells: CellComponent[] = []
+  public node: RowNode
+  public cells = new Array<CellComponent>()
 
   constructor(node: RowNode) {
     super({
