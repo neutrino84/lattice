@@ -26,7 +26,6 @@
   "license": "MIT",
   "homepage": "",
   "dependencies": {
-    "eventemitter3": "^4.0.4",
     "redom": "^3.27.1"
   },
   "devDependencies": {
@@ -35,6 +34,7 @@
     "@rollup/plugin-typescript": "^4.1.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.17.1",
+    "rollup-plugin-scss": "^2.5.0",
     "serve": "^11.3.2",
     "tslib": "^2.0.0",
     "typescript": "^3.9.5"
