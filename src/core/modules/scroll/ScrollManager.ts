@@ -2,6 +2,7 @@
 import Core from '../..'
 import Module from '../Module'
 import Rectangle from '../../../geometry/Rectangle'
+import ColumnManager from '../column/ColumnManager'
 import GridManager from '../../modules/grid/GridManager'
 import RowManager from '../row/RowManager'
 
@@ -10,17 +11,16 @@ export default class ScrollManager extends Module {
   private static LOOK_AHEAD_BUFFER_SIZE = 256
   private static DEBOUNCE_TIMEOUT_MS = 50
 
-  public bounds: Rectangle = new Rectangle()
-  public viewport: Rectangle = new Rectangle()
-
   private debounce: NodeJS.Timeout | undefined
   private grid: GridManager | undefined
   private row: RowManager | undefined
+  private column: ColumnManager | undefined
+
+  public bounds: Rectangle = new Rectangle()
+  public viewport: Rectangle = new Rectangle()
 
   constructor(core: Core) {
     super(core)
-
-    this.core.grid.on('scroll', this.onscroll, this)
   }
 
   /*
@@ -29,9 +29,13 @@ export default class ScrollManager extends Module {
   public init(): void {
     super.init()
   
-    // manager references
+    // manager module references
+    this.column = this.core.registry.get<ColumnManager>('ColumnManager')
     this.grid = this.core.registry.get<GridManager>('GridManager')
     this.row = this.core.registry.get<RowManager>('RowManager')
+
+    // listen to grid component scroll event
+    this.grid && this.grid.component.on('scroll', this.onscroll, this)
   }
 
   /*
@@ -47,13 +51,13 @@ export default class ScrollManager extends Module {
   public resize(): void {
     if (this.grid) {
       // create bounds
-      this.bounds = this.grid.boundaries.grid.clone()
+      this.bounds = this.grid.component.bounds.clone()
       this.bounds.height *= ScrollManager.LOOK_AHEAD_FACTOR
 
       // create viewport
-      this.viewport = this.grid.boundaries.grid.clone()
+      this.viewport = this.grid.component.bounds.clone()
       this.viewport.height += ScrollManager.LOOK_AHEAD_BUFFER_SIZE * 2
-      this.viewport.y = this.bounds.y + this.core.grid.el.scrollTop - ScrollManager.LOOK_AHEAD_BUFFER_SIZE
+      this.viewport.y = this.bounds.y + this.grid.component.el.scrollTop - ScrollManager.LOOK_AHEAD_BUFFER_SIZE
     }
   }
 
@@ -61,17 +65,19 @@ export default class ScrollManager extends Module {
    *
    */
   public scroll(): void {
-    // move viewport to scrolled position
-    this.viewport.y = this.bounds.y + this.core.grid.el.scrollTop - ScrollManager.LOOK_AHEAD_BUFFER_SIZE
-    
-    // update row node culling
-    if (this.row) {
-      this.row.nodes.forEach((node) => {
-        node.cull()
-        if (this.viewport.contains(node.bounds)) {
-          node.uncull()
-        }
-      })
+    if (this.grid) {
+      // move viewport to scrolled position
+      this.viewport.y = this.bounds.y + this.grid.component.el.scrollTop - ScrollManager.LOOK_AHEAD_BUFFER_SIZE
+
+      // update row node culling
+      if (this.row) {
+        this.row.nodes.forEach((node) => {
+          node.cull()
+          if (this.viewport.contains(node.bounds)) {
+            node.uncull()
+          }
+        })
+      }
     }
   }
 
@@ -97,5 +103,6 @@ export default class ScrollManager extends Module {
 
     delete this.grid
     delete this.row
+    delete this.column
   }
 }

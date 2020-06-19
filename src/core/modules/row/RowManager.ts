@@ -34,13 +34,13 @@ export default class RowManager extends Module {
   public init(): void {
     super.init()
 
-    // mount row items component
-    this.component.mount(this.core.grid.el)
-
     // manager references
     this.grid = this.core.registry.get<GridManager>('GridManager')
     this.column = this.core.registry.get<ColumnManager>('ColumnManager')
     this.scroll = this.core.registry.get<ScrollManager>('ScrollManager')
+
+    // mount row items component
+    this.grid && this.component.mount(this.grid.component.el)
   }
 
   /*
@@ -56,8 +56,8 @@ export default class RowManager extends Module {
     let component = this.component
     if (grid != undefined) {
       // initialize row manager boundary
-      bounds = this.bounds = grid.boundaries.grid.cloneZeroed()
-      bounds.width = grid.boundaries.grid.width
+      bounds = this.bounds = grid.component.bounds.cloneZeroed()
+      bounds.width = grid.component.bounds.width
 
       // create nodes from data
       data.forEach((item: any) => {

@@ -1,19 +1,22 @@
 import Core from '../..'
 import Module from '../Module'
-import Rectangle from '../../../geometry/Rectangle'
 import ColumnManager from '../column/ColumnManager'
-
-type GridBoundaries = {
-  root: Rectangle
-  grid: Rectangle
-}
+import RowManager from '../row/RowManager'
+import ScrollManager from '../scroll/ScrollManager'
+import RootComponent from '../../components/RootComponent'
+import HeaderComponent from '../../components/HeaderComponent'
+import FooterComponent from '../../components/FooterComponent'
+import GridComponent from '../../components/GridComponent'
 
 export default class GridManager extends Module {
-  column: ColumnManager | undefined
-  boundaries: GridBoundaries = {
-    root: new Rectangle(),
-    grid: new Rectangle(),
-  }
+  public root: RootComponent
+  public header: HeaderComponent
+  public component: GridComponent
+  public footer: FooterComponent
+
+  public row: RowManager | undefined
+  public column: ColumnManager | undefined
+  public scroll: ScrollManager | undefined
 
   /*
    *
@@ -21,7 +24,14 @@ export default class GridManager extends Module {
   constructor(core: Core) {
     super(core)
 
-    this.core.grid.on('scroll', this.onscroll.bind(this))
+    this.root = new RootComponent(core.root)
+    this.header = new HeaderComponent()
+    this.component =  new GridComponent()
+    this.footer = new FooterComponent()
+
+    this.header.mount(core.root)
+    this.component.mount(core.root)
+    this.footer.mount(core.root)
   }
 
   /*
@@ -30,8 +40,13 @@ export default class GridManager extends Module {
   public init(): void {
     super.init()
 
-    // manager references
+    // listen to grid scroll event
+    this.component.on('scroll', this.onscroll.bind(this))
+
+    // column module reference
+    this.row = this.core.registry.get<RowManager>('RowManager')
     this.column = this.core.registry.get<ColumnManager>('ColumnManager')
+    this.scroll = this.core.registry.get<ScrollManager>('ScrollManager')
   }
 
   /*
@@ -46,30 +61,18 @@ export default class GridManager extends Module {
    */
   public resize(): void {
     let column
-    let core = this.core
-    let boundaries = this.boundaries
-
-    boundaries.root = new Rectangle(core.root.getBoundingClientRect())
-
+    let root = this.root
+    let component = this.component
+    let header = this.header
+    let footer = this.footer
+    root.resize()
     if (this.column) {
       column = this.column
-      core.grid.attributes({
-        style: {
-          height: (boundaries.root.height - column.component.bounds.height) + 'px'
-        }
-      })
-      boundaries.grid = core.grid.getBoundingRectangle()
-      
-      if (column.component.bounds.width > boundaries.grid.width) {
-        boundaries.grid.width = column.component.bounds.width
-      }
+      header.resize(column.component.bounds.height)
+      component.resize(root.bounds.height - footer.bounds.height - column.component.bounds.height)
+      component.bounds.width = column.component.bounds.width
     } else {
-      core.grid.attributes({
-        style: {
-          height: boundaries.root.height + 'px'
-        }
-      })
-      boundaries.grid = boundaries.root
+      component.resize(root.bounds.height)
     }
   }
 
@@ -77,7 +80,9 @@ export default class GridManager extends Module {
    *
    */
   public onscroll(): void {
-    this.core.header.el.scrollLeft = this.core.grid.el.scrollLeft
+    // header column row and grid left/right
+    // must have linked scrolling behavior
+    this.header.el.scrollLeft = this.component.el.scrollLeft
   }
 
   /*
@@ -85,5 +90,18 @@ export default class GridManager extends Module {
    */
   public destroy(): void {
     super.destroy()
+
+    this.root.destroy()
+    this.header.destroy()
+    this.component.destroy()
+    this.footer.destroy()
+
+    delete this.root
+    delete this.header
+    delete this.component
+    delete this.footer
+    delete this.row
+    delete this.column
+    delete this.scroll
   }
 }

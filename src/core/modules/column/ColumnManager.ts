@@ -1,14 +1,20 @@
 
-import Core, { GridOptions } from '../..'
 import Module from '../Module'
+import Core, { GridOptions } from '../..'
+import GridManager from '../grid/GridManager'
+import RowManager from '../row/RowManager'
+import ScrollManager from '../scroll/ScrollManager'
 import ColumnNode from './ColumnNode'
 import ColumnRowComponent from '../../components/ColumnRowComponent'
 import CellComponent from '../../components/CellComponent'
 
 export default class ColumnManager extends Module {
+  public row: RowManager | undefined
+  public grid: GridManager | undefined
+  public scroll: ScrollManager | undefined
+
   public options: GridOptions
   public component: ColumnRowComponent
-
   public nodes = new Array<ColumnNode>()
   public columns = new Map<string, CellComponent[]>()
 
@@ -22,11 +28,16 @@ export default class ColumnManager extends Module {
   public init(): void {
     super.init()
 
+    // manager module references
+    this.row = this.core.registry.get<RowManager>('RowManager')
+    this.grid = this.core.registry.get<GridManager>('GridManager')
+    this.scroll = this.core.registry.get<ScrollManager>('ScrollManager')
+
     // mount column row component
-    this.component.mount(this.core.header.el)
+    this.grid && this.component.mount(this.grid.header.el)
 
     // update local bounds w/ component bounds
-    // zeroed (to align column components)
+    // and zero width to add cells
     this.component.bounds = this.component.getZeroedBoundingRectangle()
   }
 
@@ -35,6 +46,7 @@ export default class ColumnManager extends Module {
    */
   public mount(): void {
     let node
+    let width
     let nodes = this.nodes
     let columns = this.columns
     let component = this.component
@@ -55,12 +67,24 @@ export default class ColumnManager extends Module {
       component.bounds.extend(node.component.getBoundingRectangle())
     })
 
-    //
+    // set column row component height
     component.attributes({
       style: {
         height: component.bounds.height + 'px'
       }
     })
+
+    // save column row width
+    width = component.bounds.width
+
+    // re-calculate column component bounds
+    // to account for margin, padding, border
+    component.bounds = component.getBoundingRectangle()
+
+    // bounds width must be set to full size
+    if (width > component.bounds.width) {
+      component.bounds.width = width
+    }
   }
 
   /*
@@ -93,8 +117,12 @@ export default class ColumnManager extends Module {
 
     this.component.destroy()
 
+    delete this.row
+    delete this.grid
+    delete this.scroll
+    delete this.options
     delete this.options
     delete this.nodes
-    delete this.component
+    delete this.columns
   }
 }

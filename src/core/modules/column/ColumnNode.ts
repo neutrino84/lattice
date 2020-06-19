@@ -21,8 +21,8 @@ export default class ColumnNode {
     this.component.mount(manager.component.el)
     this.component.attributes({
       style: {
-        left: this.manager.component.bounds.width + 'px',
-        width: this.width + 'px',
+        left: manager.component.bounds.width + 'px',
+        width: definition.width + 'px',
       }
     })
   }

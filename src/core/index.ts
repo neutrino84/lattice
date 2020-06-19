@@ -1,15 +1,12 @@
 
 import EventEmitter from 'eventemitter3'
-import ModuleRegistry from './ModuleRegistry'
 import Logger from './Logger'
+import ModuleRegistry from './ModuleRegistry'
 
 import GridManager from './modules/grid/GridManager'
 import ColumnManager from './modules/column/ColumnManager'
 import RowManager from './modules/row/RowManager'
 import ScrollManager from './modules/scroll/ScrollManager'
-
-import HeaderComponent from './components/HeaderComponent'
-import GridComponent from './components/GridComponent'
 
 export type ColumnDefinition = {
   name: string
@@ -26,13 +23,10 @@ export interface GridOptions {
 }
 
 export default class Core extends EventEmitter {
-  public options: GridOptions
   public root: HTMLElement
-  public registry: ModuleRegistry
   public logger: Logger
-
-  public header: HeaderComponent
-  public grid: GridComponent
+  public options: GridOptions
+  public registry: ModuleRegistry
 
   constructor(options: GridOptions) {
     super()
@@ -51,14 +45,6 @@ export default class Core extends EventEmitter {
       throw Error('Grid root element must be specified.')
     }
 
-    // instantiate root components
-    this.header = new HeaderComponent()
-    this.grid = new GridComponent()
-
-    // initialize base components
-    this.header.mount(this.root)
-    this.grid.mount(this.root)
-
     // instantiate logger
     this.logger = new Logger(options.debug || false)
 
@@ -74,14 +60,10 @@ export default class Core extends EventEmitter {
   }
 
   destroy(): void {
-    this.header.destroy()
-    this.grid.destroy()
     this.registry.destroy()
 
     delete this.root
     delete this.options
-    delete this.header
-    delete this.grid
     delete this.logger
     delete this.registry
   }
