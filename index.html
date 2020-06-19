@@ -16,7 +16,7 @@
       font-family: Arial, Helvetica, sans-serif;
       font-size: 16px;
       line-height: 20px;
-      width: 1280px;
+      width: 1024px;
       height: 512px;
     }
     #grid .header,
@@ -81,6 +81,7 @@
 
     let words = ['hamburger', 'cheese', 'nuts', 'pizza', 'potatoes', 'brocolli', 'meat', 'fruit', 'candy', 'milk', 'chicken', 'onions', 'pickles']
     let types = ['item', 'title', 'item', 'item', 'item', 'item', 'item']
+    let names = ['jonathan', 'donald', 'peter', 'karen', 'dana', 'jack', 'timothy', 'jenny', 'arnold', 'kimiko', 'albert', 'larry', 'pamela']
     let random = (num, arr) => {
       let index
       let string = []
@@ -99,6 +100,8 @@
         title: random(3),
         description: random(8),
         category: random(1),
+        name: random(1, names),
+        partners: random(3, names),
         type: random(1, types),
       })
     }
@@ -113,13 +116,21 @@
         field: 'id',
         width: 80,
       }, {
-        name: 'title',
-        field: 'title',
-        width: 240,
-      }, {
         name: 'category',
         field: 'category',
         width: 140,
+      }, {
+        name: 'name',
+        field: 'name',
+        width: 140,
+      }, {
+        name: 'partners',
+        field: 'partners',
+        width: 240,
+      }, {
+        name: 'title',
+        field: 'title',
+        width: 300,
       }, {
         name: 'description',
         field: 'description',
