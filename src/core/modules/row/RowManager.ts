@@ -60,10 +60,11 @@ export default class RowManager extends Module {
       bounds.width = grid.component.bounds.width
 
       // create nodes from data
-      data.forEach((item: any) => {
+      data.forEach((item: any, index) => {
         node = new RowNode({
             manager: this,
             data: item,
+            index: index,
         })
 
         // mount or init

@@ -10,6 +10,7 @@ import { ColumnDefinition } from '../..'
 export type RowOptions = {
   data: any
   manager: RowManager
+  index: number
 }
 
 export default class RowNode extends Node {
@@ -19,6 +20,7 @@ export default class RowNode extends Node {
   public data: any
   public type: string
   public manager: RowManager
+  public index: number
   public component: RowComponent | null
   public definitions: ColumnDefinition[]
 
@@ -33,6 +35,7 @@ export default class RowNode extends Node {
     this.manager = options.manager
     this.data = options.data
     this.definitions = options.manager.definitions
+    this.index = options.index
     this.type = this.classes().join('-')
   }
 
@@ -118,6 +121,8 @@ export default class RowNode extends Node {
       }
     })
 
+    // position node and
+    // set style attributes
     component.attributes({
       style: {
         height: bounds.height + 'px',
@@ -126,8 +131,17 @@ export default class RowNode extends Node {
       }
     })
 
-    // cache node bounds
-    cache.set(type, bounds)
+    // measure component bounds with cells
+    // if it has not yet been cached
+    let remeasure
+    let cached = cache.get(type)
+    if (!cached) {
+      remeasure = component.getBoundingRectangle()
+      bounds.height = remeasure.height
+      cache.set(type, bounds)
+    } else {
+      bounds.height = cached.height
+    }
   }
 
   update(): void {
@@ -165,17 +179,19 @@ export default class RowNode extends Node {
   }
 
   uncull(): void {
+    let translate
     let component
     let type = this.type
     let bounds = this.bounds
     let manager = this.manager
     if (this.component == null) {
+      translate = bounds.y - bounds.height - manager.bounds.y
       component = RowNode.pool.checkout(type)
       if (component) {
         this.component = component
         this.component.attributes({
           style: {
-            transform: 'translate(0, ' + (bounds.y - bounds.height - manager.bounds.y) + 'px)',
+            transform: 'translate(0, ' + translate + 'px)',
           }
         })
         this.update()
@@ -189,9 +205,10 @@ export default class RowNode extends Node {
   }
 
   classes(): string[] {
-    let base = ['row']
     let options = this.manager.core.options
     let classes = options.classes
+    let parity = this.index % 2 == 0 ? 'even': 'odd'
+    let base = ['row', parity]
     if (typeof classes === 'function') {
       return classes(this.data).concat(base)
     } else if(classes) {
