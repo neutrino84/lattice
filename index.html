@@ -31,7 +31,7 @@
     }
     #grid .column-row {
       background: #f6f6f0;
-      border-bottom: solid 1px #dcdcd2;
+      border-bottom: solid 1px #e8e8e8;
     }
     #grid .grid {
       overflow: auto;
@@ -40,17 +40,19 @@
       position: absolute;
     }
     #grid .row.odd {
-      background: #f0fafe;
+      background: #f2fafc;
     }
     #grid .row.title {
       font-weight: bold;
-      background: #ffffff;
+      background: #f8f8f8;
     }
     #grid .column-cell,
     #grid .cell {
       position: absolute;
-      padding: 10px;
+      padding: 12px;
       overflow: hidden;
+      color: #444444;
+      font-size: 0.92em;
       text-overflow: ellipsis;
       white-space: nowrap;
       border-right: solid 1px #eae6e6;
@@ -60,7 +62,10 @@
       border-right: none;
     }
     #grid .column-cell {
+      color: #888888;
+      font-size: 0.88em;
       text-transform: uppercase;
+      border-right: solid 1px #f6f6f0;
     }
     /*
     #grid .cell {
@@ -70,7 +75,7 @@
     #grid .column-cell .column-dragger {
       position: absolute;
       top: 0;
-      right: 0;
+      left: 0;
       width: 5px;
       height: 100%;
       cursor: ew-resize;
@@ -101,7 +106,7 @@
       data.push({
         id: i + '000',
         title: random(3),
-        description: random(8),
+        description: random(12),
         category: random(1),
         name: random(1, names),
         partners: random(3, names),
