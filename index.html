@@ -75,10 +75,11 @@
     #grid .column-cell .column-dragger {
       position: absolute;
       top: 0;
-      left: 0;
-      width: 5px;
+      right: 0;
+      width: 10px;
       height: 100%;
       cursor: ew-resize;
+      background: #ccc;
     }
   </style>
 </head>
@@ -90,26 +91,29 @@
     let words = ['hamburger', 'cheese', 'nuts', 'pizza', 'potatoes', 'brocolli', 'meat', 'fruit', 'candy', 'milk', 'chicken', 'onions', 'pickles']
     let types = ['item', 'title', 'item', 'item', 'item', 'item', 'item', 'item', 'item', 'item', 'item', 'item', 'item', 'item', 'item', 'item', 'item', 'item']
     let names = ['jonathan', 'donald', 'peter', 'karen', 'dana', 'jack', 'timothy', 'jenny', 'arnold', 'kimiko', 'albert', 'larry', 'pamela']
-    let random = (num, arr) => {
+    let description = ['really', 'good', 'sweet and sour', 'tasty and delicous', 'healthy', 'and', 'very', 'strong flavor']
+    let random = (num, arr, str) => {
       let index
       let string = []
       let list = arr || words
       for (let i=0; i<num; i++) {
-        index = Math.floor(Math.random() * list.length)
-        string.push(list[index])
+        if (i == 0 || Math.random() > 0.5) {
+          index = Math.floor(Math.random() * list.length)
+          string.push(list[index])
+        }
       }
-      return string.join(' ')
+      return string.join(str ? str : ' ')
     }
 
     let data = []
-    for (let i=0; i<5000; i++) {
+    for (let i=0; i<100; i++) {
       data.push({
         id: i + '000',
         title: random(3),
-        description: random(12),
+        description: random(12, description),
         category: random(1),
         name: random(1, names),
-        partners: random(3, names),
+        partners: random(3, names, ', '),
         type: random(1, types),
       })
     }
@@ -132,7 +136,7 @@
         field: 'name',
         width: 140,
       }, {
-        name: 'partners',
+        name: 'partner(s)',
         field: 'partners',
         width: 240,
       }, {
@@ -142,7 +146,7 @@
       }, {
         name: 'description',
         field: 'description',
-        width: 440,
+        width: 380,
       }],
     })
   </script>
