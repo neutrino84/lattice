@@ -75,37 +75,6 @@ export default class ColumnManager extends Module {
   /*
    *
    */
-  // resizeColumnNodes(key: string, delta: number): void {
-  //   this.row && this.row.nodes.forEach((node) => {
-  //     let cells, definition
-  //     let component = node.component
-  //     let definitions = node.manager.definitions
-  //     if (component) {
-  //       cells = component.cells
-  //       cells.forEach((cell, index, cells) => {
-  //         definition = definitions[index]
-  //         if (key === definition.field) {
-  //           cell.attributes({
-  //             style: {
-  //               width: (definition.width + delta) + 'px'
-  //             }
-  //           })
-  //           cells.slice(index+1).forEach((cell) => {
-  //             cell.attributes({
-  //               style: {
-  //                   left: cell.left + delta + 'px'
-  //               }
-  //             })
-  //           })
-  //         }
-  //       })
-  //     }
-  //   })
-  // }
-
-  /*
-   *
-   */
   public destroy(): void {
     super.destroy()
 

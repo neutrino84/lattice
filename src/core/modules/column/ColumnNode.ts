@@ -3,6 +3,7 @@ import ColumnRowComponent from '../../components/ColumnRowComponent'
 import ColumnCellComponent from '../../components/ColumnCellComponent'
 import Rectangle from '../../../geometry/Rectangle'
 import { ColumnDefinition } from '../..'
+import RowNode from '../row/RowNode'
 
 export type ColumnOptions = {
   definitions: ColumnDefinition[]
@@ -18,15 +19,11 @@ export default class ColumnNode {
   public type = 'header'
   public component = new ColumnRowComponent(this)
   public bounds = new Rectangle()
-  public start = new MouseEvent('mousedown')
-  public listeners = new Array<(event: MouseEvent) => void>()
 
   constructor(options: ColumnOptions) {
     this.manager = options.manager
     this.definitions = options.definitions
     this.index = options.index
-
-    // this.component.dragger.el.addEventListener('mousedown', this.onDragStart.bind(this), { capture: false })
   }
 
   public init(): void {
@@ -49,16 +46,17 @@ export default class ColumnNode {
     definitions.forEach((definition) => {
       let left = bounds.width
       let width = definition.width
-      let value = definition.name
       let cell = new ColumnCellComponent(this)
 
       // mount and style
       cell.left = left
-      cell.update(value)
+      cell.width = width
+      cell.definition = definition
+      cell.update(definition.name)
       cell.mount(component.el)
       cell.attributes({
         style: {
-          width: width + 'px',
+          width: definition.width + 'px',
           left: left + 'px',
         }
       })
@@ -80,37 +78,113 @@ export default class ColumnNode {
     })
   }
 
-  // public onDragStart(event: MouseEvent): void {
-  //   console.log('start')
+  resize(): void {
+    //..
+  }
 
-  //   let listeners = this.listeners
-  //   let onDragEnd = this.onDragEnd.bind(this)
-  //   let onMouseMove = this.onMouseMove.bind(this)
+  /*
+   *
+   */
+  dragDropColumnNodes(): void {
+    //..
+  }
 
-  //   this.start = event
+  /*
+   *
+   */
+  dragResizeColumnNodes(key: string, delta: number): void {
+    let nodes
+    let manager = this.manager
+    let row = manager.row
+    if (row) {
+      nodes = row.nodes.slice(0) as any[]
+      nodes.push(this)
+      nodes.forEach((node) => {
+        let cells, definition
+        let component = node.component
+        let definitions = node.definitions
+        if (component) {
+          cells = component.cells
+          cells.forEach((cell: any, index: any, cells: any) => {
+            definition = definitions[index]
+            if (key === definition.field) {
+              if (cell.width != undefined) {
+                cell.attributes({
+                  style: {
+                    width: (cell.width + delta) + 'px'
+                  }
+                })
+              }
+              cells.slice(index+1).forEach((cell: any) => {
+                if (cell.left != undefined) {
+                  cell.attributes({
+                    style: {
+                        left: cell.left + delta + 'px'
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  }
 
-  //   listeners.push(onDragEnd)
-  //   listeners.push(onMouseMove)
+  dragEndColumnNodes(key: string, delta: number): void {
+    let nodes
+    let manager = this.manager
+    let row = manager.row
+    if (row) {
+      nodes = row.nodes.slice(0) as any[]
+      nodes.push(this)
+      nodes.forEach((node) => {
+        let cells, definition, width, left
+        let component = node.component
+        let definitions = node.definitions
 
-  //   document.body.addEventListener('mouseup', onDragEnd, { capture: false })
-  //   document.body.addEventListener('mousemove', onMouseMove, { capture: false })
-  // }
+        if (component) {
+          cells = component.cells
+          cells.forEach((cell: any, index: any, cells: any) => {
+            definition = definitions[index]
+            if (key === definition.field) {
+              if (cell.width != undefined) {
+                width = cell.width + delta
+                cell.attributes({
+                  style: {
+                    width: width + 'px'
+                  }
+                })
+                cell.width = width
+                definition.width = width
+              }
+              cells.slice(index+1).forEach((cell: any) => {
+                if (cell.left != undefined) {
+                  left = cell.left + delta
+                  cell.attributes({
+                    style: {
+                        left: left + 'px'
+                    }
+                  })
+                  cell.left = left
+                }
+              })
+            }
+          })
+        }
+        node.bounds.width += delta
+        node.component && node.component.attributes({
+          style: {
+            width: node.bounds.width + 'px',
+          }
+        })
+      })
+      if (manager.scroll) {
+        manager.scroll.viewport.width += delta
+      }
+    }
 
-  // public onMouseMove(event: MouseEvent): void {
-  //   let delta = event.screenX - this.start.screenX
-  //   this.manager.resizeColumnNodes(this.definition.field, delta)
-  //   this.component.attributes({
-  //     style: {
-  //       width: this.definition.width + delta + 'px'
-  //     }
-  //   })
-  //   event.preventDefault()
-  // }
-
-  // public onDragEnd(event: MouseEvent): void {
-  //   console.log('end')
-  //   event.stopImmediatePropagation()
-  //   document.body.removeEventListener('mouseup', this.listeners[0], { capture: false })
-  //   document.body.removeEventListener('mousemove', this.listeners[1], { capture: false })
-  // }
+    RowNode.pool.clear()
+    RowNode.cache.clear()
+  }
 }

@@ -14,8 +14,8 @@ export type RowOptions = {
 }
 
 export default class RowNode extends Node {
-  private static cache = new Cache<Rectangle>()
-  private static pool = new Pool<RowComponent>()
+  public static cache = new Cache<Rectangle>()
+  public static pool = new Pool<RowComponent>()
 
   public data: any
   public type: string
@@ -91,6 +91,7 @@ export default class RowNode extends Node {
 
       // mount and style
       cell.left = left
+      cell.width = width
       cell.mount(component.el)
       cell.attributes({
         style: {
