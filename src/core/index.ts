@@ -48,8 +48,8 @@ export default class Core {
     // the order these are passed matters
     this.registry = new ModuleRegistry(this)
     this.registry.init([
-      ColumnManager,
       GridManager,
+      ColumnManager,
       ScrollManager,
       RowManager,
     ])

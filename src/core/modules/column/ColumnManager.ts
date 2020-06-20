@@ -1,28 +1,29 @@
 
 import Module from '../Module'
-import Core, { GridOptions } from '../..'
+import Core, { ColumnDefinition } from '../..'
 import GridManager from '../grid/GridManager'
 import RowManager from '../row/RowManager'
 import ScrollManager from '../scroll/ScrollManager'
 import ColumnNode from './ColumnNode'
-import ColumnRowComponent from '../../components/ColumnRowComponent'
-import CellComponent from '../../components/CellComponent'
+import ColumnItemsComponent from '../../components/ColumnItemsComponent'
+import Rectangle from '../../../geometry/Rectangle'
 
 export default class ColumnManager extends Module {
-  public row: RowManager | undefined
   public grid: GridManager | undefined
+  public row: RowManager | undefined
   public scroll: ScrollManager | undefined
 
-  public options: GridOptions
-  public component: ColumnRowComponent
+  public definitions: ColumnDefinition[]
+  public component: ColumnItemsComponent
+
   public nodes = new Array<ColumnNode>()
-  public columns = new Map<string, CellComponent[]>()
+  public bounds: Rectangle = new Rectangle()
 
   constructor(core: Core) {
     super(core)
 
-    this.options = core.options
-    this.component = new ColumnRowComponent()
+    this.definitions = this.core.options.definitions
+    this.component = new ColumnItemsComponent()
   }
 
   public init(): void {
@@ -35,80 +36,72 @@ export default class ColumnManager extends Module {
 
     // mount column row component
     this.grid && this.component.mount(this.grid.header.el)
-
-    // update local bounds w/ component bounds
-    // and zero width to add cells
-    this.component.bounds = this.component.getZeroedBoundingRectangle()
   }
 
-  /*
-   *
-   */
   public mount(): void {
-    let node
-    let width
     let nodes = this.nodes
-    let columns = this.columns
+    let bounds = this.bounds
     let component = this.component
-    let options = this.options
+    let grid = this.grid
+    let node = new ColumnNode({
+      manager: this,
+      definitions: this.definitions,
+      index: 0,
+    })
+    if (grid != undefined) {
+      bounds.copy(grid.component.bounds)
 
-    // initialize row nodes
-    options.definitions.forEach(definition => {
-      // create new node instance
-      node = new ColumnNode(this, definition)
+      //
+      node.init()
+      node.mount(bounds)
 
-      // init cell collection
-      columns.set(definition.field, new Array<CellComponent>())
-
-      // add node to collection
+      //
       nodes.push(node)
 
-      // extend local bounds
-      component.bounds.extend(node.component.getBoundingRectangle())
-    })
+      //
+      bounds.extend(node.bounds)
 
-    // set column row component height
-    component.attributes({
-      style: {
-        height: component.bounds.height + 'px',
-        width: component.bounds.width + 'px',
-      }
-    })
-
-    // save column row width
-    width = component.bounds.width
-
-    // re-calculate column component bounds
-    // to account for margin, padding, border
-    component.bounds = component.getBoundingRectangle()
-
-    // bounds width must be set to full size
-    if (width > component.bounds.width) {
-      component.bounds.width = width
+      // set scrollable region
+      component.attributes({
+        style: {
+          height: bounds.height + 'px'
+        }
+      })
+    } else {
+      throw new Error('ColumnManager module requires GridManager module to be registered')
     }
   }
 
   /*
    *
    */
-  public add(key: string, cell: CellComponent): void {
-    let collection = this.columns.get(key)
-    if (collection) {
-      collection.push(cell)
-    }
-  }
-
-  /*
-   *
-   */
-  public remove(key: string, cell: CellComponent): void {
-    let index
-    let collection = this.columns.get(key)
-    if (collection) {
-      index = collection.indexOf(cell)
-      collection.splice(index, 1)
-    }
-  }
+  // resizeColumnNodes(key: string, delta: number): void {
+  //   this.row && this.row.nodes.forEach((node) => {
+  //     let cells, definition
+  //     let component = node.component
+  //     let definitions = node.manager.definitions
+  //     if (component) {
+  //       cells = component.cells
+  //       cells.forEach((cell, index, cells) => {
+  //         definition = definitions[index]
+  //         if (key === definition.field) {
+  //           cell.attributes({
+  //             style: {
+  //               width: (definition.width + delta) + 'px'
+  //             }
+  //           })
+  //           cells.slice(index+1).forEach((cell) => {
+  //             cell.attributes({
+  //               style: {
+  //                   left: cell.left + delta + 'px'
+  //               }
+  //             })
+  //           })
+  //         }
+  //       })
+  //     }
+  //   })
+  // }
 
   /*
    *
@@ -121,9 +114,7 @@ export default class ColumnManager extends Module {
     delete this.row
     delete this.grid
     delete this.scroll
-    delete this.options
-    delete this.options
+    delete this.definitions
     delete this.nodes
-    delete this.columns
   }
 }

@@ -21,11 +21,9 @@ export default class RowNode extends Node {
   public type: string
   public manager: RowManager
   public index: number
-  public component: RowComponent | null
   public definitions: ColumnDefinition[]
+  public component: RowComponent | null
 
-  public mounted = false
-  public display = false
   public bounds = new Rectangle()
 
   constructor(options: RowOptions) {
@@ -75,7 +73,7 @@ export default class RowNode extends Node {
     let component = this.component = new RowComponent(this)
     let type = this.type
 
-    // create component and mount
+    // mount component
     component.mount(manager.component.el)
 
     // align bounds
@@ -84,7 +82,7 @@ export default class RowNode extends Node {
     bounds.y = alignment.y + alignment.height
 
     // create cell components
-    definitions.forEach((definition, index) => {
+    definitions.forEach((definition) => {
       let cached
       let left = bounds.width
       let width = definition.width
@@ -92,6 +90,7 @@ export default class RowNode extends Node {
       let cell = new CellComponent(value)
 
       // mount and style
+      cell.left = left
       cell.mount(component.el)
       cell.attributes({
         style: {
@@ -114,11 +113,6 @@ export default class RowNode extends Node {
 
       // add cell to collection
       component.cells.push(cell)
-
-      // register cell to column
-      if (manager.column) {
-        manager.column.add(definition.field, cell)
-      }
     })
 
     // position node and

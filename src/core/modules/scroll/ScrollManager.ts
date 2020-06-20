@@ -38,17 +38,14 @@ export default class ScrollManager extends Module {
     this.grid && this.grid.component.on('scroll', this.onscroll, this)
   }
 
-  /*
-   *
-   */
   public mount(): void {
-    this.resize()
+    //..
   }
 
   /*
    *
    */
-  public resize(): void {
+  public mounted(): void {
     if (this.grid) {
       // create bounds
       this.bounds = this.grid.component.bounds.clone()

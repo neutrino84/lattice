@@ -53,26 +53,24 @@ export default class GridManager extends Module {
    *
    */
   public mount(): void {
-    this.resize()
+    this.root.resize()
+    this.header.resize(0)
+    this.component.resize(0)
   }
 
   /*
    *
    */
-  public resize(): void {
-    let column
+  public mounted(): void {
+    let column = this.column
     let root = this.root
-    let component = this.component
-    let header = this.header
     let footer = this.footer
-    root.resize()
-    if (this.column) {
-      column = this.column
-      header.resize(column.component.bounds.height)
-      component.resize(root.bounds.height - footer.bounds.height - column.component.bounds.height)
-      component.bounds.width = column.component.bounds.width
+    if (column) {
+      this.header.resize(column.bounds.height)
+      this.component.resize(root.bounds.height - footer.bounds.height - column.bounds.height)
+      this.component.bounds.width = column.bounds.width
     } else {
-      component.resize(root.bounds.height)
+      //.. TODO: handle no columns
     }
   }
 

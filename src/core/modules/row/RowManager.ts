@@ -9,15 +9,15 @@ import ScrollManager from '../scroll/ScrollManager'
 import RowItemsComponent from '../../components/RowItemsComponent'
 
 export default class RowManager extends Module {
-  public data: any[]
-  public definitions: ColumnDefinition[]
-  public component: RowItemsComponent
-
   public grid: GridManager | undefined
   public column: ColumnManager | undefined
   public scroll: ScrollManager | undefined
 
-  public nodes: RowNode[] = []
+  public data: any[]
+  public definitions: ColumnDefinition[]
+  public component: RowItemsComponent
+
+  public nodes = new Array<RowNode>()
   public bounds: Rectangle = new Rectangle()
 
   constructor(core: Core) {
@@ -47,8 +47,15 @@ export default class RowManager extends Module {
    *
    */
   public mount(): void {
+    //..
+  }
+
+  /*
+   *
+   */
+  public mounted(): void {
     let node: RowNode
-    let bounds: Rectangle
+    let bounds = this.bounds
     let data = this.data
     let nodes = this.nodes
     let grid = this.grid
@@ -56,8 +63,8 @@ export default class RowManager extends Module {
     let component = this.component
     if (grid != undefined) {
       // initialize row manager boundary
-      bounds = this.bounds = grid.component.bounds.cloneZeroed()
-      bounds.width = grid.component.bounds.width
+      bounds.copy(grid.component.bounds)
+      bounds.height = 0
 
       // create nodes from data
       data.forEach((item: any, index) => {
