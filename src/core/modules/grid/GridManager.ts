@@ -70,7 +70,7 @@ export default class GridManager extends Module {
       this.component.resize(root.bounds.height - footer.bounds.height - column.bounds.height)
       this.component.bounds.width = column.bounds.width
     } else {
-      //.. TODO: handle no columns
+      //.. TODO: handle no column manager
     }
   }
 
