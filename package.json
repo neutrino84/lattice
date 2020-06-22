@@ -29,11 +29,11 @@
     "redom": "^3.27.1"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^12.0.0",
+    "@rollup/plugin-commonjs": "^13.0.0",
     "@rollup/plugin-node-resolve": "^8.0.1",
     "@rollup/plugin-typescript": "^4.1.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.17.1",
+    "rollup": "^2.18.0",
     "rollup-plugin-scss": "^2.5.0",
     "serve": "^11.3.2",
     "tslib": "^2.0.0",
