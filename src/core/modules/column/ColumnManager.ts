@@ -49,19 +49,21 @@ export default class ColumnManager extends Module {
       index: 0,
     })
     if (grid != undefined) {
+      // set local bounds
       bounds.copy(grid.component.bounds)
 
-      //
+      // mount node
       node.init()
       node.mount(bounds)
 
-      //
+      // add node to collection
       nodes.push(node)
 
-      //
+      // extend local bounds
       bounds.extend(node.bounds)
 
-      // set scrollable region
+      // update local component height
+      // to calculated bounds height
       component.attributes({
         style: {
           height: bounds.height + 'px'

@@ -49,8 +49,8 @@ export default class Core {
     this.registry = new ModuleRegistry(this)
     this.registry.init([
       GridManager,
-      ColumnManager,
       ScrollManager,
+      ColumnManager,
       RowManager,
     ])
   }
