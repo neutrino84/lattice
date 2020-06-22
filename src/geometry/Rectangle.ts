@@ -41,6 +41,13 @@ export default class Rectangle extends DOMRect {
     this.height = target.height
   }
 
+  set(x: number, y: number, width: number, height: number): void {
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+  }
+
   cloneZeroed(): Rectangle {
     let rect = new Rectangle(this)
         rect.width = 0
