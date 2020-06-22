@@ -132,9 +132,9 @@ export default class RowNode extends Node {
     let cached = cache.get(type)
     if (!cached) {
       remeasure = component.getBoundingRectangle()
-      bounds.height = remeasure.height
-      cache.set(type, bounds)
+      cache.set(type, remeasure)
     } else {
+      bounds.width = cached.height
       bounds.height = cached.height
     }
   }
@@ -180,7 +180,7 @@ export default class RowNode extends Node {
     let bounds = this.bounds
     let manager = this.manager
     if (this.component == null) {
-      translate = bounds.y - bounds.height - manager.bounds.y
+      translate = bounds.y - manager.bounds.y
       component = RowNode.pool.acquire(type)
       if (component) {
         this.component = component
