@@ -65,7 +65,7 @@ export default class RowNode extends Node {
    * 
    */
   mount(alignment: Rectangle | undefined = undefined): void {
-    let height
+    let translate
     let cache = RowNode.cache
     let manager = this.manager
     let bounds = this.bounds
@@ -130,12 +130,12 @@ export default class RowNode extends Node {
 
     // position node and
     // set style attributes
-    height = alignment ? alignment.height : bounds.y
+    translate = alignment ? alignment.height : bounds.y
     component.attributes({
       style: {
         height: bounds.height + 'px',
         width: bounds.width + 'px',
-        transform: 'translate(0, ' + height + 'px)',
+        transform: 'translate(0, ' + translate + 'px)',
       }
     })
 
