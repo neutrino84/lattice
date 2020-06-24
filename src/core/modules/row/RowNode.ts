@@ -64,7 +64,8 @@ export default class RowNode extends Node {
   /*
    * 
    */
-  mount(alignment: Rectangle): void {
+  mount(alignment: Rectangle | undefined = undefined): void {
+    let height
     let cache = RowNode.cache
     let manager = this.manager
     let bounds = this.bounds
@@ -78,8 +79,11 @@ export default class RowNode extends Node {
 
     // align bounds
     bounds.width = 0
-    bounds.x = alignment.x
-    bounds.y = alignment.y + alignment.height
+
+    if (alignment) {
+      bounds.x = alignment.x
+      bounds.y = alignment.y + alignment.height
+    }
 
     // create cell components
     definitions.forEach((definition) => {
@@ -104,7 +108,14 @@ export default class RowNode extends Node {
       // to improve performance
       cached = cache.get(type + '-' + definition.field)
       if (!cached) {
+        // get bounding rectangle of cell
+        // to find border, margin, padding
         cached = cell.getBoundingRectangle()
+
+        // account for horizontal scrolling
+        if (manager.grid) {
+          cached.x += manager.grid.component.el.scrollLeft
+        }
         cache.set(type + '-' + definition.field, cached)
       }
       cached.y = bounds.y
@@ -118,13 +129,22 @@ export default class RowNode extends Node {
 
     // position node and
     // set style attributes
+    height = alignment ? alignment.height : bounds.y
     component.attributes({
       style: {
         height: bounds.height + 'px',
         width: bounds.width + 'px',
-        transform: 'translate(0, ' + alignment.height + 'px)',
+        transform: 'translate(0, ' + height + 'px)',
       }
     })
+
+    if (alignment == undefined) {
+      component.attributes({
+        style: {
+          background: '#fff4f4'
+        }
+      })
+    }
 
     // measure component bounds with cells
     // if it has not yet been cached
@@ -134,7 +154,7 @@ export default class RowNode extends Node {
       remeasure = component.getBoundingRectangle()
       cache.set(type, remeasure)
     } else {
-      bounds.width = cached.height
+      bounds.width = cached.width
       bounds.height = cached.height
     }
   }
@@ -191,10 +211,7 @@ export default class RowNode extends Node {
         })
         this.update()
       } else {
-        let cloned = bounds.clone()
-            cloned.y = 0
-            cloned.height = bounds.y
-        this.mount(cloned)
+        this.mount()
       }
     }
   }
