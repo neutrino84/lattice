@@ -77,9 +77,10 @@ export default class RowNode extends Node {
     // mount component
     component.mount(manager.component.el)
 
-    // align bounds
+    // reset width
     bounds.width = 0
 
+    // apply positioning
     if (alignment) {
       bounds.x = alignment.x
       bounds.y = alignment.y + alignment.height
