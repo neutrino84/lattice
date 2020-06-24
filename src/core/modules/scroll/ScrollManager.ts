@@ -8,7 +8,7 @@ import RowManager from '../row/RowManager'
 
 export default class ScrollManager extends Module {
   private static LOOK_AHEAD_FACTOR = 2
-  private static LOOK_AHEAD_BUFFER_SIZE = 256
+  private static LOOK_AHEAD_BUFFER_SIZE = 128
   private static DEBOUNCE_TIMEOUT_MS = 50
 
   private debounce: NodeJS.Timeout | undefined
