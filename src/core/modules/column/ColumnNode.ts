@@ -56,8 +56,8 @@ export default class ColumnNode {
       cell.mount(component.el)
       cell.attributes({
         style: {
-          width: definition.width + 'px',
           left: left + 'px',
+          width: definition.width + 'px',
         }
       })
 
@@ -85,6 +85,20 @@ export default class ColumnNode {
   /*
    *
    */
+  dragResizeStartColumnNodes(key: string, delta: number): void {
+    this.resizeColumnNodes(key, delta, false)
+  }
+
+  /*
+   *
+   */
+  dragResizeEndColumnNodes(key: string, delta: number): void {
+    this.resizeColumnNodes(key, delta, true)
+  }
+
+  /*
+   *
+   */
   dragDropColumnNodes(): void {
     //..
   }
@@ -92,7 +106,7 @@ export default class ColumnNode {
   /*
    *
    */
-  dragResizeColumnNodes(key: string, delta: number): void {
+  resizeColumnNodes(key: string, delta: number, persist: boolean = false): void {
     let nodes
     let manager = this.manager
     let row = manager.row
@@ -100,49 +114,9 @@ export default class ColumnNode {
       nodes = row.nodes.slice(0) as any[]
       nodes.push(this)
       nodes.forEach((node) => {
-        let cells, definition
+        let cells, definition, left, width
         let component = node.component
         let definitions = node.definitions
-        if (component) {
-          cells = component.cells
-          cells.forEach((cell: any, index: any, cells: any) => {
-            definition = definitions[index]
-            if (key === definition.field) {
-              if (cell.width != undefined) {
-                cell.attributes({
-                  style: {
-                    width: (cell.width + delta) + 'px'
-                  }
-                })
-              }
-              cells.slice(index+1).forEach((cell: any) => {
-                if (cell.left != undefined) {
-                  cell.attributes({
-                    style: {
-                        left: cell.left + delta + 'px'
-                    }
-                  })
-                }
-              })
-            }
-          })
-        }
-      })
-    }
-  }
-
-  dragEndColumnNodes(key: string, delta: number): void {
-    let nodes
-    let manager = this.manager
-    let row = manager.row
-    if (row) {
-      nodes = row.nodes.slice(0) as any[]
-      nodes.push(this)
-      nodes.forEach((node) => {
-        let cells, definition, width, left
-        let component = node.component
-        let definitions = node.definitions
-
         if (component) {
           cells = component.cells
           cells.forEach((cell: any, index: any, cells: any) => {
@@ -155,8 +129,17 @@ export default class ColumnNode {
                     width: width + 'px'
                   }
                 })
-                cell.width = width
-                definition.width = width
+                if (node.component) {
+                  node.component.attributes({
+                    style: {
+                      width: (node.bounds.width + delta) + 'px',
+                    }
+                  })
+                }
+                if (persist) {
+                  cell.width = width
+                  definition.width = width
+                }
               }
               cells.slice(index+1).forEach((cell: any) => {
                 if (cell.left != undefined) {
@@ -166,25 +149,25 @@ export default class ColumnNode {
                         left: left + 'px'
                     }
                   })
-                  cell.left = left
+                  if (persist) {
+                    cell.left = left
+                  }
                 }
               })
             }
           })
         }
-        node.bounds.width += delta
-        node.component && node.component.attributes({
-          style: {
-            width: node.bounds.width + 'px',
-          }
-        })
+        if (persist) {
+          node.bounds.width += delta
+        }
       })
-      if (manager.scroll) {
+      if (persist && manager.scroll) {
         manager.scroll.viewport.width += delta
       }
     }
-
-    RowNode.pool.clear()
-    RowNode.cache.clear()
+    if (persist) {
+      RowNode.pool.clear()
+      RowNode.cache.clear()
+    }
   }
 }

@@ -2,6 +2,15 @@ import ComponentBase from './ComponentBase'
 import ColumnNode from '../modules/column/ColumnNode'
 import { ColumnDefinition } from '..'
 
+export type Drag = {
+  start: MouseEvent
+  end: MouseEvent
+  constraint: {
+    max: number
+    min: number
+  }
+}
+
 export default class ColumnCellComponent extends ComponentBase {
   public node: ColumnNode
   public label: ComponentBase
@@ -11,10 +20,16 @@ export default class ColumnCellComponent extends ComponentBase {
   public width: number | undefined
   public definition: ColumnDefinition | undefined
 
-  public start = new MouseEvent('mousedown')
-  public end = new MouseEvent('mouseup')
-
   public listeners = new Array<(event: MouseEvent) => void>()
+  public drag: Drag = {
+    start: new MouseEvent('mousedown'),
+    end: new MouseEvent('mouseup'),
+    constraint: {
+      max: 0,
+      min: 0,
+    }
+  }
+
 
   constructor(node: ColumnNode) {
     super({
@@ -34,16 +49,16 @@ export default class ColumnCellComponent extends ComponentBase {
     this.handle.el.addEventListener('mousedown', this.onDragStart.bind(this), { capture: false })
   }
 
+  public update(content: string): void {
+    this.label.update(content)
+  }
 
   public onDragStart(event: MouseEvent): void {
-    console.log('start')
-
     let listeners = this.listeners
-
     let onDragEnd = this.onDragEnd.bind(this)
     let onMouseMove = this.onMouseMove.bind(this)
 
-    this.start = event
+    this.drag.start = event
 
     listeners.push(onDragEnd)
     listeners.push(onMouseMove)
@@ -57,25 +72,20 @@ export default class ColumnCellComponent extends ComponentBase {
   }
 
   public onMouseMove(event: MouseEvent): void {
-    console.log('move')
-
     event.preventDefault()
     event.stopPropagation()
     event.stopImmediatePropagation()
 
-    this.definition && this.node.dragResizeColumnNodes(
-      this.definition.field, event.screenX - this.start.screenX
+    this.definition && this.node.dragResizeStartColumnNodes(
+      this.definition.field, event.screenX - this.drag.start.screenX
     )
   }
 
   public onDragEnd(event: MouseEvent): void {
-    console.log('end')
-
-    this.end = event
-
-    this.definition && this.node.dragEndColumnNodes(
+    this.drag.end = event
+    this.definition && this.node.dragResizeEndColumnNodes(
       this.definition.field,
-      this.end.screenX - this.start.screenX
+      this.drag.end.screenX - this.drag.start.screenX
     )
 
     event.preventDefault()
@@ -86,9 +96,5 @@ export default class ColumnCellComponent extends ComponentBase {
     document.body.removeEventListener('mousemove', this.listeners[1], { capture: false })
 
     this.listeners = []
-  }
-
-  update(content: string): void {
-    this.label.update(content)
   }
 }
