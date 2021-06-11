@@ -45,7 +45,7 @@ export default class ModuleRegistry {
   }
 
   destroy(): void {
-    delete this.core
-    delete this.modules
+    // delete this.core
+    // delete this.modules
   }
 }

@@ -116,10 +116,10 @@ export default class RowManager extends Module {
   public destroy(): void {
     super.destroy()
 
-    delete this.data
-    delete this.definitions
-    delete this.component
-    delete this.nodes
-    delete this.bounds
+    // delete this.data
+    // delete this.definitions
+    // delete this.component
+    // delete this.nodes
+    // delete this.bounds
   }
 }

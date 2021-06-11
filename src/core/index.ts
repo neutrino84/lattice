@@ -58,9 +58,9 @@ export default class Core {
   destroy(): void {
     this.registry.destroy()
 
-    delete this.root
-    delete this.options
-    delete this.logger
-    delete this.registry
+    // delete this.root
+    // delete this.options
+    // delete this.logger
+    // delete this.registry
   }
 }

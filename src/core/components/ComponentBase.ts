@@ -90,6 +90,6 @@ export default class ComponentBase {
   }
 
   destroy(): void {
-    delete this.el
+    // delete this.el
   }
 }

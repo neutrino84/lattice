@@ -94,10 +94,10 @@ export default class GridManager extends Module {
     this.component.destroy()
     this.footer.destroy()
 
-    delete this.root
-    delete this.header
-    delete this.component
-    delete this.footer
+    // delete this.root
+    // delete this.header
+    // delete this.component
+    // delete this.footer
     delete this.row
     delete this.column
     delete this.scroll

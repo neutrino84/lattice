@@ -24,6 +24,6 @@ export default abstract class Module {
   }
 
   destroy(): void {
-    delete this.core
+    // delete this.core
   }
 }

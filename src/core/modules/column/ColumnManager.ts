@@ -85,7 +85,7 @@ export default class ColumnManager extends Module {
     delete this.row
     delete this.grid
     delete this.scroll
-    delete this.definitions
-    delete this.nodes
+    // delete this.definitions
+    // delete this.nodes
   }
 }
