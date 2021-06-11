@@ -1,4 +1,3 @@
-import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
 import pkg from './package.json'
@@ -14,35 +13,33 @@ let configurations = []
       watch: watchOptions,
       input: './src/main.ts',
       plugins: [
-        typescript({ target: 'es5', module: 'commonjs' }),
-        commonjs({ extensions }),
-        resolve(),
+        typescript(),
+        resolve()
       ],
       output: {
         file: pkg.main,
         format: 'cjs',
         // entryFileNames: 'ngrid.[format].js',
+        exports: 'auto'
       }
     }, {
       watch: watchOptions,
       input: './src/main.ts',
       plugins: [
-        typescript({ target: 'es6', module: 'es6' }),
-        commonjs({ extensions }),
-        resolve(),
+        typescript(),
+        resolve()
       ],
       output: {
         file: pkg.module,
-        format: 'es',
+        format: 'es'
         // entryFileNames: 'ngrid.[format].js'
       }
     }, {
       watch: watchOptions,
       input: './src/main.ts',
       plugins: [
-        typescript({ target: 'es5', module: 'commonjs' }),
-        resolve({ extensions }),
-        commonjs({ extensions }),
+        typescript(),
+        resolve()
       ],
       output: {
         file: pkg.browser,
