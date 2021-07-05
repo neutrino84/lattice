@@ -32,10 +32,11 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-typescript": "^8.2.1",
     "rimraf": "^3.0.2",
-    "rollup": "^2.51.2",
-    "rollup-plugin-scss": "^2.6.1",
+    "rollup": "^2.51.7",
+    "rollup-plugin-scss": "^3.0.0",
+    "sass": "1.35.1",
     "serve": "^12.0.0",
-    "tslib": "^2.2.0",
-    "typescript": "^4.3.2"
+    "tslib": "^2.3.0",
+    "typescript": "^4.3.5"
   }
 }
