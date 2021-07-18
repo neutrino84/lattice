@@ -19,11 +19,11 @@
     "type-check:watch": "npm run type-check -- --watch",
     "watch": "rollup -c --watch",
     "prebuild": "rimraf dist",
-    "build": "npm run prebuild && npm run build:js",
+    "build": "npm run build:js",
     "build:js": "rollup -c",
     "build:types": "tsc -d --declarationDir ./dist/types",
     "pretest": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --coverage",
     "serve": "serve"
   },
   "author": "Oliver J Dyla",
@@ -33,6 +33,7 @@
     "redom": "^3.27.1"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.24",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-typescript": "^8.2.1",
     "rimraf": "^3.0.2",
@@ -40,6 +41,8 @@
     "rollup-plugin-scss": "^3.0.0",
     "sass": "1.35.1",
     "serve": "^12.0.0",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.3",
     "tslib": "^2.3.0",
     "typescript": "^4.3.5"
   }
