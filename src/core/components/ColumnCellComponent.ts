@@ -10,7 +10,6 @@ export type Drag = {
     min: number
   }
 }
-
 export default class ColumnCellComponent extends ComponentBase {
   public node: ColumnNode
   public label: ComponentBase
@@ -29,7 +28,6 @@ export default class ColumnCellComponent extends ComponentBase {
       min: 0,
     }
   }
-
 
   constructor(node: ColumnNode) {
     super({
