@@ -19,7 +19,7 @@
     "type-check:watch": "npm run type-check -- --watch",
     "watch": "rollup -c --watch",
     "prebuild": "rimraf dist",
-    "build": "npm run build:js",
+    "build": "npm run build:js && npm run build:types",
     "build:js": "rollup -c",
     "build:types": "tsc -d --declarationDir ./dist/types",
     "pretest": "npm run build",
