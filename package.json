@@ -30,6 +30,7 @@
   "license": "MIT",
   "homepage": "",
   "dependencies": {
+    "eventemitter3": "^4.0.7",
     "redom": "^3.27.1"
   },
   "devDependencies": {
