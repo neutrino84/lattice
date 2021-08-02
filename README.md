@@ -8,5 +8,7 @@ Lattice is a high performance and light weight data grid table implementation th
   * Pin columns
 * Pagination
 * Sorting
-* Row Selection
+* Filtering
+* Pagination
+* Row selection
 * Highly customizable
